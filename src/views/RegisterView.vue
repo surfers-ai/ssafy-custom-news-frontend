@@ -1,30 +1,35 @@
 <script setup lang="ts">
-import { loginApi } from "@/api/auth";
+import { registerApi } from "@/api/auth";
 import StateButton from "@/common/StateButton.vue";
 import TheInput from "@/common/TheInput.vue";
 import TheFooter from "@/components/TheFooter.vue";
 import router from "@/router";
 import { useUserStore } from "@/store/user";
-import type { ILoginReq } from "@/types/auth";
+import type { IRegisterReq } from "@/types/auth";
 import { ref } from "vue";
 import { RouterLink } from "vue-router";
 
+const name = ref("");
 const email = ref("");
 const password = ref("");
 
 const userStore = useUserStore();
 const submitForm = async () => {
-  const req: ILoginReq = {
+  const req: IRegisterReq = {
+    username: name.value,
     email: email.value,
-    password: password.value,
+    password1: password.value,
+    password2: password.value,
   };
 
   try {
-    const response = await loginApi(req);
+    const response = await registerApi(req);
     userStore.setToken(response.data.access, response.data.refresh);
+    alert("회원가입이 완료되었습니다!");
     router.push("/");
-  } catch {
-    alert("다시 시도해주세요.");
+  } catch (error) {
+    console.error("Registration failed:", error);
+    alert(`회원가입에 실패했습니다. 다시 시도해주세요. ${error}"`);
   }
 };
 </script>
@@ -37,10 +42,15 @@ const submitForm = async () => {
     </div>
 
     <div class="signup-form">
-      <h2>로그인</h2>
+      <h2>회원가입</h2>
       <p>SSAFY 뉴스 서비스에 오신 것을 환영합니다</p>
 
       <form @submit.prevent="submitForm">
+        <div>
+          <label>이름</label>
+          <TheInput placeholder="이름" v-model="name" />
+        </div>
+
         <div>
           <label>이메일</label>
           <TheInput placeholder="이메일" v-model="email" />
@@ -49,20 +59,18 @@ const submitForm = async () => {
         <div>
           <label>비밀번호</label>
           <TheInput
-            placeholder="6자 이상 입력해주세요"
+            placeholder="8자 이상 입력해주세요"
             v-model="password"
             type="password"
           />
         </div>
 
-        <StateButton class="submit-button" type="button" isActive
-          >로그인하기</StateButton
-        >
+        <StateButton type="button" isActive>가입하기</StateButton>
       </form>
 
       <div class="login-link">
-        <span>아직 계정이 없으신가요?</span>
-        <RouterLink to="/register">가입하기</RouterLink>
+        <span>이미 계정이 있으신가요?</span>
+        <RouterLink to="login">로그인하기 </RouterLink>
       </div>
     </div>
 
@@ -75,12 +83,12 @@ const submitForm = async () => {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding-top: 80px;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
   background-color: #f7fafc;
   font-family: Arial, sans-serif;
+  padding-top: 50px;
 
   .header {
     text-align: center;
@@ -115,6 +123,7 @@ const submitForm = async () => {
 
     p {
       color: #666;
+      margin-bottom: 20px;
     }
 
     form {
@@ -122,20 +131,26 @@ const submitForm = async () => {
       flex-direction: column;
       gap: 15px;
       text-align: left;
-      margin: 40px 0;
 
       label {
         display: block;
         margin-bottom: 5px;
         padding-left: 3px;
       }
+    }
 
-      .submit-button {
-        margin-top: 32px;
-      }
+    .submit-button {
+      background-color: #111;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 0;
+      font-size: 1rem;
+      cursor: pointer;
     }
 
     .login-link {
+      margin-top: 50px;
       font-size: 0.9rem;
       color: #666;
 
@@ -145,6 +160,24 @@ const submitForm = async () => {
         text-decoration: none;
         margin-left: 5px;
       }
+    }
+  }
+
+  .footer {
+    margin-top: 80px;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #666;
+
+    a {
+      color: #666;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+
+    p {
+      margin-top: 5px;
+      color: #aaa;
     }
   }
 }

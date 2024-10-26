@@ -3,6 +3,9 @@ import NotFoundView from "@/views/NotFoundView.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import NewsView from "@/views/NewsView.vue";
 import LoginView from "@/views/LoginView.vue";
+import NewsDetailView from "@/views/NewsDetailView.vue";
+import RegisterView from "@/views/RegisterView.vue";
+import DashBoardView from "@/views/DashBoardView.vue";
 
 const router = createRouter({
   history: createWebHistory("/"),
@@ -18,14 +21,33 @@ const router = createRouter({
       // meta: { requiresAuth: true },
     },
     {
+      path: "/news/:id",
+      name: "newsDetail",
+      component: NewsDetailView,
+      props: true,
+      // meta: { requiresAuth: true },
+    },
+    {
       path: "/login",
       name: "login",
       component: LoginView,
     },
     {
+      path: "/register",
+      name: "register",
+      component: RegisterView,
+    },
+    {
+      path: "/dashboard",
+      name: "dashboard",
+      component: DashBoardView,
+      // meta: { requiresAuth: true },
+    },
+    {
       path: "/mypage",
       name: "mypage",
       component: NewsView,
+      meta: { requiresAuth: true },
     },
     {
       path: "/:pathMatch(.*)*",

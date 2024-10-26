@@ -1,9 +1,13 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { RouterLink } from "vue-router";
+</script>
 
 <template>
   <div class="header__container">
     <header>
-      <span class="logo"> SSAFYNEWS </span>
+      <router-link to="/">
+        <span class="logo"> SSAFYNEWS </span>
+      </router-link>
 
       <nav class="menus">
         <router-link to="/dashboard">대시보드</router-link>
@@ -20,13 +24,14 @@
 }
 
 header {
-  width: 1280px;
+  max-width: 1280px;
   margin: 0 auto;
   color: black;
   height: 80px;
   justify-content: space-between;
   align-items: center;
   display: flex;
+  padding: 0 15px;
 }
 
 .logo {

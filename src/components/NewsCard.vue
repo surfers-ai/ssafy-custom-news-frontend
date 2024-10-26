@@ -6,7 +6,7 @@ const props = defineProps<{ data: INews }>();
 </script>
 
 <template>
-  <button class="card">
+  <div class="card">
     <div class="card__header">
       <StateButton type="state" size="sm" disabled>{{
         props.data.category
@@ -16,13 +16,11 @@ const props = defineProps<{ data: INews }>();
         >· {{ props.data.write_date.toLocaleDateString() }}</span
       >
     </div>
-
-    <h2 class="title">{{ props.data.title }}</h2>
-    <p class="description">{{ props.data.content }}</p>
-
+    <RouterLink :to="{ name: 'newsDetail', params: { id: props.data.id } }">
+      <h2 class="title">{{ props.data.title }}</h2>
+      <p class="description">{{ props.data.content }}</p>
+    </RouterLink>
     <div class="stats">
-      <span>📖 5분</span>
-      <span>👁️ 1234</span>
       <span>❤️ 128</span>
       <span>📄</span>
     </div>
@@ -37,7 +35,7 @@ const props = defineProps<{ data: INews }>();
         {{ tag }}
       </StateButton>
     </div>
-  </button>
+  </div>
 </template>
 
 <style scoped lang="scss">

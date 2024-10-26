@@ -10,11 +10,13 @@ http.interceptors.request.use(
       config.headers["Authorization"] = `Bearer ${accessToken}`;
     }
 
+    // config.headers["Authorization"] = `Bearer ${import.meta.env.VITE_MASTER}`;
+
     return config;
   },
   function (error) {
     return Promise.reject(error);
-  },
+  }
 );
 
 http.interceptors.response.use(
@@ -23,7 +25,7 @@ http.interceptors.response.use(
   },
   async function (error) {
     return Promise.reject(error);
-  },
+  }
 );
 
 export default http;

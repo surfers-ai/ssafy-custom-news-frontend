@@ -1,18 +1,17 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, useAttrs } from "vue";
 
 interface IButtonProps {
+  class?: string;
   type?: "state" | "tag" | "button";
   size?: "sm" | "md";
   isActive?: boolean;
-  disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<IButtonProps>(), {
   type: "button",
   size: "md",
   isActive: false,
-  disabled: false,
 });
 
 const emit = defineEmits(["click"]);
@@ -26,18 +25,21 @@ const handleClick = () => {
     emit("click");
   }
 };
+
+const attrs = useAttrs();
 </script>
 
 <template>
   <button
     :class="[
       'toggle-button',
+      props.class,
       buttonSizeClass,
       buttonTypeClass,
-      { active: props.isActive && buttonType === 'state' },
+      { active: props.isActive },
     ]"
     @click="handleClick"
-    :disabled="props.disabled"
+    v-bind="attrs"
   >
     <slot></slot>
   </button>
@@ -51,9 +53,7 @@ const handleClick = () => {
   border-radius: 8px;
   background-color: white;
   color: var(--c-text);
-  transition:
-    background-color 0.1s ease,
-    color 0.1s ease;
+  text-align: center;
 
   &.tag {
     background-color: #f5f5f5;
@@ -65,6 +65,10 @@ const handleClick = () => {
   &.active {
     background-color: #000;
     color: #fff;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.8);
+    }
   }
 
   &:hover {
