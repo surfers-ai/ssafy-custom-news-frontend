@@ -6,10 +6,10 @@ import { newsDummy } from "@/types/dummy";
 import ContentBox from "@/common/ContentBox.vue";
 import StateButton from "@/common/StateButton.vue";
 import TheInput from "@/common/TheInput.vue";
+import AIChat from "@/components/AIChat.vue";
 
 const route = useRoute();
 const news = ref<INews | null>(null);
-const text = ref("이 기사에 대해 궁금한 점을 자유롭게 물어보세요!");
 
 onMounted(() => {
   const newsId = route.params.id;
@@ -49,18 +49,9 @@ onMounted(() => {
           <div class="likes">❤️ {{ news ? 342 : "0" }}</div>
         </div>
       </ContentBox>
-
-      <ContentBox class="ai">
-        <h1 class="title">🤖 AI 뉴스 어시스턴트</h1>
-
-        <TheInput v-model="text" disabled />
-        <div class="ai__question">
-          <TheInput placeholder="질문을 입력하세요..." />
-          <StateButton class="ai__submit-btn" isActive> 📤 </StateButton>
-        </div>
-      </ContentBox>
+      <AIChat />
     </div>
-    <div></div>
+
     <ContentBox class="sidebar">
       <h1 class="title">관련 기사</h1>
     </ContentBox>
@@ -116,19 +107,6 @@ onMounted(() => {
 .content {
   margin: 16px 0;
   line-height: 1.6;
-}
-
-.ai {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  &__question {
-    display: flex;
-    gap: 10px;
-  }
-  &__submit-btn {
-    width: 70px;
-  }
 }
 
 .tags {

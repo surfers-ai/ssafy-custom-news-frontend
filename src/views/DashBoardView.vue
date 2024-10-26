@@ -69,7 +69,7 @@ const readData = {
 };
 
 const barOptions = {
-  indexAxis: "y",
+  indexAxis: "y" as const,
   scales: {
     x: {
       beginAtZero: true,
@@ -83,7 +83,7 @@ const barOptions = {
 };
 
 const readBarOptions = {
-  indexAxis: "x",
+  indexAxis: "x" as const,
   scales: {
     x: {
       beginAtZero: true,
@@ -133,7 +133,12 @@ const readBarOptions = {
 
       <ContentBox>
         <h1>좋아요 누른 기사</h1>
-        <NewsPreview title="zzzzzz" date="11.11.11" category="기술" likes="1" />
+        <NewsPreview
+          title="zzzzzz"
+          date="11.11.11"
+          category="기술"
+          :likes="1"
+        />
       </ContentBox>
     </div>
   </div>

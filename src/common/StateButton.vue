@@ -47,6 +47,7 @@ const attrs = useAttrs();
 
 <style scoped lang="scss">
 .toggle-button {
+  white-space: nowrap;
   padding: 10px 20px;
   font-size: 16px;
   border: 1px solid #ccc;

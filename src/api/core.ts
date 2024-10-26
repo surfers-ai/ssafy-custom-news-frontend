@@ -10,8 +10,6 @@ http.interceptors.request.use(
       config.headers["Authorization"] = `Bearer ${accessToken}`;
     }
 
-    // config.headers["Authorization"] = `Bearer ${import.meta.env.VITE_MASTER}`;
-
     return config;
   },
   function (error) {

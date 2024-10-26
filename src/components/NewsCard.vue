@@ -43,6 +43,7 @@ const props = defineProps<{ data: INews }>();
   background-color: white;
   width: 100%;
   padding: 20px;
+  margin-bottom: 10px;
 
   &__header {
     display: flex;
@@ -83,6 +84,8 @@ const props = defineProps<{ data: INews }>();
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  padding-bottom: 40px;
+  border-bottom: 1px solid #e7e6e6;
 }
 
 .tags .state-button {

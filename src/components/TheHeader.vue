@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { useAuth } from "@/composables/useAuth";
 import { RouterLink } from "vue-router";
+
+const { logoutUser } = useAuth();
 </script>
 
 <template>
@@ -11,7 +14,7 @@ import { RouterLink } from "vue-router";
 
       <nav class="menus">
         <router-link to="/dashboard">대시보드</router-link>
-        <router-link to="/profile">내 정보</router-link>
+        <button @click="logoutUser">로그아웃</button>
       </nav>
     </header>
   </div>
