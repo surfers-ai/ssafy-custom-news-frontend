@@ -10,8 +10,10 @@ import {
   LinearScale,
 } from "chart.js";
 import ContentBox from "@/common/ContentBox.vue";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import NewsPreview from "@/components/NewsPreview.vue";
+import { getDashboard } from "@/api/api";
+import type { IArticle, IDashboard } from "@/types/data";
 
 ChartJS.register(
   ArcElement,
@@ -22,21 +24,39 @@ ChartJS.register(
   Legend
 );
 
-const categoryData = {
-  labels: ["기술", "경제", "문화", "스포츠"],
+const categoryData = ref({
+  labels: [] as string[],
   datasets: [
     {
-      data: [40, 30, 20, 10],
-      backgroundColor: ["#F67C6C", "#7DA56F", "#FCDC4B", "#4975C1"],
+      data: [] as number[],
+      backgroundColor: [] as string[],
     },
   ],
-};
+});
+const categories = ref<[string, number][]>([]);
+const favoriteArticles = ref<IArticle[]>([]);
 
-const categories = ref([
-  ["기술", 40],
-  ["경제", 30],
-  ["음악", 30],
-]);
+const keywordData = ref({
+  labels: [] as string[],
+  datasets: [
+    {
+      label: "키워드 빈도수",
+      data: [] as number[],
+      backgroundColor: "#C7E4B8",
+    },
+  ],
+});
+
+const readData = ref({
+  labels: [] as string[],
+  datasets: [
+    {
+      label: "키워드 빈도수",
+      data: [] as number[],
+      backgroundColor: "#DBB8E4",
+    },
+  ],
+});
 
 const options = {
   plugins: {
@@ -44,28 +64,13 @@ const options = {
       display: false,
     },
   },
-};
-
-const keywordData = {
-  labels: ["AI", "주식", "영화", "메타버스", "반도체"],
-  datasets: [
-    {
-      label: "키워드 빈도수",
-      data: [28, 20, 18, 15, 10],
-      backgroundColor: "#C7E4B8",
+  scales: {
+    y: {
+      beginAtZero: true,
+      min: 0,
+      max: 1,
     },
-  ],
-};
-
-const readData = {
-  labels: ["AI", "주식", "영화", "메타버스", "반도체"],
-  datasets: [
-    {
-      label: "키워드 빈도수",
-      data: [28, 20, 18, 15, 10, 1, 1, 1],
-      backgroundColor: "#DBB8E4",
-    },
-  ],
+  },
 };
 
 const barOptions = {
@@ -95,13 +100,74 @@ const readBarOptions = {
     },
   },
 };
+
+async function init() {
+  try {
+    const data = <IDashboard>(await getDashboard()).data.data;
+
+    if (data.my_favorite_category) {
+      categoryData.value = {
+        labels: Object.keys(data.my_favorite_category),
+        datasets: [
+          {
+            data: Object.values(data.my_favorite_category),
+            backgroundColor: [
+              "#F67C6C",
+              "#7DA56F",
+              "#FCDC4B",
+              "#4975C1",
+              "#FFB4CE",
+            ],
+          },
+        ],
+      };
+    }
+    // 키워드 데이터 설정
+    if (data.my_favorite_key_word) {
+      keywordData.value = {
+        labels: Object.keys(data.my_favorite_key_word),
+        datasets: [
+          {
+            label: "키워드 빈도수",
+            data: Object.values(data.my_favorite_key_word),
+            backgroundColor: "#C7E4B8",
+          },
+        ],
+      };
+    }
+    // 주간 읽은 기사 데이터 설정
+    if (data.number_of_written_articles) {
+      readData.value = {
+        labels: Object.keys(data.number_of_written_articles),
+        datasets: [
+          {
+            label: "주간 읽은 기사 수",
+            data: Object.values(data.number_of_written_articles),
+            backgroundColor: "#DBB8E4",
+          },
+        ],
+      };
+    }
+
+    // 즐겨찾기한 기사 목록 설정
+    if (data.favorite_articles) {
+      favoriteArticles.value = data.favorite_articles;
+    }
+  } catch (error) {
+    console.error("Error fetching dashboard data:", error);
+  }
+}
+
+onMounted(() => {
+  init();
+});
 </script>
 
 <template>
   <div class="dashboard">
     <div class="layout">
       <ContentBox class="category">
-        <h1 class="title">나의 관심 카테고리</h1>
+        <h1 class="title">🐤 나의 관심 카테고리</h1>
         <div class="category__chart">
           <Doughnut :data="categoryData" :options="options" />
           <div class="category__labels">
@@ -121,30 +187,31 @@ const readBarOptions = {
       </ContentBox>
 
       <ContentBox class="keyword">
-        <h1>주요 키워드</h1>
+        <h1>⭐️ 주요 키워드</h1>
         <Bar :data="keywordData" :options="barOptions" />
       </ContentBox>
     </div>
     <div class="layout">
       <ContentBox>
-        <h1>주간 읽은 기사</h1>
+        <h1>📰 주간 읽은 기사</h1>
         <Bar :data="readData" :options="readBarOptions" />
       </ContentBox>
 
-      <ContentBox>
-        <h1>좋아요 누른 기사</h1>
-        <NewsPreview
-          title="zzzzzz"
-          date="11.11.11"
-          category="기술"
-          :likes="1"
-        />
+      <ContentBox class="like-news">
+        <h1>❤️ 좋아요 누른 기사</h1>
+        <div v-for="(article, index) in favoriteArticles" :key="index">
+          <NewsPreview :to="`/news/${article.id}`" :news="article" />
+        </div>
       </ContentBox>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
+.like-news {
+  overflow-y: auto;
+  box-sizing: border-box;
+}
 .dashboard {
   margin-top: 50px;
   display: flex;

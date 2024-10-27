@@ -10,6 +10,7 @@ declare module 'vue' {
     AIChat: typeof import('./src/components/AIChat.vue')['default']
     NewsCard: typeof import('./src/components/NewsCard.vue')['default']
     NewsPreview: typeof import('./src/components/NewsPreview.vue')['default']
+    NewsPreview2: typeof import('./src/components/NewsPreview2.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TheFooter: typeof import('./src/components/TheFooter.vue')['default']

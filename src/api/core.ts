@@ -1,20 +1,20 @@
+import { useUserStore } from "@/store/user";
 import axios from "axios";
+import { storeToRefs } from "pinia";
 
 const http = axios.create({ baseURL: import.meta.env.VITE_BASE_URL });
-
 http.interceptors.request.use(
-  function (config) {
-    const accessToken = localStorage.getItem("accessToken");
+  (config) => {
+    const userStore = useUserStore(); 
+    const { token } = storeToRefs(userStore); 
 
-    if (accessToken) {
-      config.headers["Authorization"] = `Bearer ${accessToken}`;
+    if (token.value.access) {
+      config.headers["Authorization"] = `Bearer ${token.value.access}`;
     }
 
     return config;
   },
-  function (error) {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 http.interceptors.response.use(

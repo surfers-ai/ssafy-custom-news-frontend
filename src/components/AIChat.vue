@@ -59,7 +59,11 @@ const sendMessage = async () => {
     </div>
 
     <div class="ai__question">
-      <TheInput v-model="newMessage" placeholder="질문을 입력하세요..." />
+      <TheInput
+        v-model="newMessage"
+        placeholder="질문을 입력하세요..."
+        @keyup.enter="sendMessage"
+      />
       <StateButton class="ai__submit-btn" isActive @click="sendMessage"
         >📤</StateButton
       >

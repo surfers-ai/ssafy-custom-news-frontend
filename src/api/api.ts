@@ -7,16 +7,20 @@ export function getNewsList(category: string) {
 }
 
 export function getNews(id: number) {
-  return http.get(`/news/${id}`);
+  return http.get(`/news/${id}/`);
 }
 
 export function getDashboard() {
-  return http.get("/dashboard/");
+  return http.get("/dashboard");
 }
 
 export function postChat(msg: IChatReq) {
-  return http.post("/chat/", msg);
+  return http.post("/news/chat/", msg);
 }
-export function postLike() {
-  return http.post("/like");
+export function postLike(data: { article_id: string }) {
+  return http.post("/news/like/", data);
+}
+
+export function deleteLike(article_id: string) {
+  return http.delete("/news/like/", { data: { article_id } });
 }

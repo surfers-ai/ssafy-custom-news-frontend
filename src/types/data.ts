@@ -12,3 +12,18 @@ export interface INews {
   keywords: string;
   url: string;
 }
+
+export interface IArticle {
+  id: number;
+  title: string;
+  author: string;
+  write_date: string;
+}
+
+export interface IDashboard {
+  message: string;
+  my_favorite_category: Record<string, number>; 
+  my_favorite_key_word: Record<string, number>; 
+  number_of_written_articles: Record<string, number>; 
+  favorite_articles: IArticle[]; 
+}

@@ -8,7 +8,6 @@ const props = defineProps<{ data: INews }>();
 
 const { formatDate } = useDate();
 const date = computed(() => formatDate(props.data.write_date));
-
 </script>
 
 <template>
@@ -46,7 +45,7 @@ const date = computed(() => formatDate(props.data.write_date));
 <style scoped lang="scss">
 .card {
   background-color: white;
-  width: 100%;
+  width: 80%;
   padding: 20px;
   margin-bottom: 10px;
 
@@ -73,10 +72,11 @@ const date = computed(() => formatDate(props.data.write_date));
 
 .description {
   font-size: 1rem;
+  width: 90%;
   color: var(--c-gray-600);
   margin: 15px 0;
   display: -webkit-box;
-  -webkit-line-clamp: 8;
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -89,6 +89,7 @@ const date = computed(() => formatDate(props.data.write_date));
   font-size: 0.9rem;
   color: var(--c-gray-500);
   margin-bottom: 15px;
+  align-items: center;
 }
 
 .tags {
