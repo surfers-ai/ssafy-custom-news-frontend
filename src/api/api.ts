@@ -14,7 +14,7 @@ export function getDashboard() {
 }
 
 export function postChat(msg: IChatReq) {
-  return http.post("/chat", msg);
+  return http.post("/chat/", msg);
 }
 export function postLike() {
   return http.post("/like");

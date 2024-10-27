@@ -5,14 +5,14 @@ import type { INews } from "@/types/data";
 import { newsDummy } from "@/types/dummy";
 import ContentBox from "@/common/ContentBox.vue";
 import StateButton from "@/common/StateButton.vue";
-import TheInput from "@/common/TheInput.vue";
 import AIChat from "@/components/AIChat.vue";
 
 const route = useRoute();
-const news = ref<INews | null>(null);
+const news = ref<INews>();
+const newsId = ref<string>("0");
 
 onMounted(() => {
-  const newsId = route.params.id;
+  newsId.value = route.params.id[0];
   news.value = newsDummy[0];
 });
 </script>
@@ -49,7 +49,7 @@ onMounted(() => {
           <div class="likes">❤️ {{ news ? 342 : "0" }}</div>
         </div>
       </ContentBox>
-      <AIChat />
+      <AIChat :id="newsId" />
     </div>
 
     <ContentBox class="sidebar">

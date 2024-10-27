@@ -12,7 +12,3 @@ export function registerApi(req: IRegisterReq) {
 export function refreshApi(refreshToken: string | null) {
   return http.post("/api/refresh/", { refreshToken });
 }
-
-export function logoutApi() {
-  return http.post("/api/logout");
-}

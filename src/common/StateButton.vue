@@ -14,17 +14,8 @@ const props = withDefaults(defineProps<IButtonProps>(), {
   isActive: false,
 });
 
-const emit = defineEmits(["click"]);
-
-const buttonType = computed(() => props.type);
 const buttonSizeClass = computed(() => props.size);
 const buttonTypeClass = computed(() => props.type);
-
-const handleClick = () => {
-  if (buttonType.value === "state") {
-    emit("click");
-  }
-};
 
 const attrs = useAttrs();
 </script>
@@ -38,7 +29,6 @@ const attrs = useAttrs();
       buttonTypeClass,
       { active: props.isActive },
     ]"
-    @click="handleClick"
     v-bind="attrs"
   >
     <slot></slot>
