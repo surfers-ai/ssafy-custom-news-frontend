@@ -1,24 +1,35 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
-import type { INews } from "@/types/data";
-import { newsDummy } from "@/types/dummy";
 import ContentBox from "@/common/ContentBox.vue";
 import StateButton from "@/common/StateButton.vue";
 import AIChat from "@/components/AIChat.vue";
+import { useNewsStore } from "@/store/news";
+import { useDate } from "@/composables/useDate";
+import router from "@/router";
+import LeftArrow from "@/components/icon/LeftArrow.svg";
 
 const route = useRoute();
-const news = ref<INews>();
 const newsId = ref<string>("0");
+const newsStore = useNewsStore();
+
+const { formatDate } = useDate();
+const news = computed(() =>
+  newsStore.newsList.find((news) => String(news.id) === newsId.value)
+);
+
+const goBack = () => {
+  router.push("/news");
+};
 
 onMounted(() => {
   newsId.value = route.params.id[0];
-  news.value = newsDummy[0];
 });
 </script>
 
 <template>
-  <div class="news-detail">
+  <button @click="goBack" class="back-btn"><LeftArrow /></button>
+  <div v-if="news" class="news-detail">
     <div class="main-content">
       <ContentBox>
         <div class="article">
@@ -28,8 +39,8 @@ onMounted(() => {
             }}</StateButton>
             <h2 class="article__header-title">{{ news?.title }}</h2>
             <div class="article__header-writer">
-              <span>{{ news?.writer }}</span>
-              <span> 🕒 {{ news?.write_date.toLocaleDateString() }}</span>
+              <span>{{ news.writer }}</span>
+              <span> 🕒 {{ formatDate(news.write_date) }}</span>
             </div>
           </div>
 
@@ -37,7 +48,7 @@ onMounted(() => {
 
           <div class="tags">
             <StateButton
-              v-for="(tag, index) in news?.key_word"
+              v-for="(tag, index) in news.keywords"
               :key="index"
               type="tag"
               size="sm"
@@ -45,8 +56,11 @@ onMounted(() => {
               {{ tag }}
             </StateButton>
           </div>
-
-          <div class="likes">❤️ {{ news ? 342 : "0" }}</div>
+          <div class="content__emoji">
+            <div>❤️ {{ news.article_interaction.likes }}</div>
+            <div>👀 {{ news.article_interaction.read }}</div>
+            <a :href="news.url">📄</a>
+          </div>
         </div>
       </ContentBox>
       <AIChat :id="newsId" />
@@ -59,8 +73,11 @@ onMounted(() => {
 </template>
 
 <style scoped lang="scss">
+.back-btn {
+  margin: 50px 0 10px;
+}
+
 .news-detail {
-  margin-top: 50px;
   display: flex;
   gap: 20px;
 
@@ -107,6 +124,14 @@ onMounted(() => {
 .content {
   margin: 16px 0;
   line-height: 1.6;
+  &__emoji {
+    margin-top: 30px;
+    color: #888;
+    font-size: 0.9rem;
+    display: flex;
+    gap: 30px;
+    align-items: center;
+  }
 }
 
 .tags {
@@ -117,10 +142,6 @@ onMounted(() => {
 }
 
 .likes {
-  margin-top: 12px;
-  color: #888;
-  font-size: 0.9rem;
-  display: flex;
   align-items: center;
 }
 </style>

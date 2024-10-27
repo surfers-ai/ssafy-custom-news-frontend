@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import { tabs } from "@/assets/data/tabs";
+import { onMounted } from "vue";
+
 import ContentBox from "@/common/ContentBox.vue";
 import StateButton from "@/common/StateButton.vue";
-import { newsDummy } from "@/types/dummy";
-import { ref } from "vue";
+import NewsCard from "@/components/NewsCard.vue";
+import { useNewsStore } from "@/store/news";
+import { tabs } from "@/assets/data/tabs";
 
-const currentTab = ref(1);
+const newsStore = useNewsStore();
 
-const setActiveTab = (tabId: number) => {
-  currentTab.value = tabId;
-};
+onMounted(() => {
+  newsStore.fetchNews(newsStore.currentTab);
+});
 </script>
 
 <template>
@@ -19,8 +21,8 @@ const setActiveTab = (tabId: number) => {
         v-for="tab in tabs"
         :key="tab.id"
         type="state"
-        :is-active="currentTab === tab.id"
-        @click="setActiveTab(tab.id)"
+        :is-active="newsStore.currentTab === tab.id"
+        @click="newsStore.setActiveTab(tab.id)"
       >
         {{ tab.label }}
       </StateButton>
@@ -28,8 +30,12 @@ const setActiveTab = (tabId: number) => {
 
     <ContentBox class="news__box">
       <h1 class="news__box__title">🤖 AI 맞춤 추천 뉴스</h1>
-      <div class="news__box__cards">
-        <NewsCard v-for="news in newsDummy" :data="news" :key="news.id" />
+      <div
+        class="news__box__cards"
+        v-for="news in newsStore.newsList"
+        :key="news.id"
+      >
+        <NewsCard :data="news" />
       </div>
     </ContentBox>
   </div>
@@ -44,7 +50,8 @@ const setActiveTab = (tabId: number) => {
 
   &__tabs {
     display: flex;
-    gap: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
     padding: 12px 30px !important;
   }
   &__box {

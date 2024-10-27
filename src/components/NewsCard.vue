@@ -1,8 +1,14 @@
 <script setup lang="ts">
 import StateButton from "@/common/StateButton.vue";
+import { useDate } from "@/composables/useDate";
 import type { INews } from "@/types/data";
+import { computed } from "vue";
 
 const props = defineProps<{ data: INews }>();
+
+const { formatDate } = useDate();
+const date = computed(() => formatDate(props.data.write_date));
+
 </script>
 
 <template>
@@ -12,27 +18,26 @@ const props = defineProps<{ data: INews }>();
         props.data.category
       }}</StateButton>
       <span class="subcategory">{{ props.data.writer }}</span>
-      <span class="date"
-        >· {{ props.data.write_date.toLocaleDateString() }}</span
-      >
+      <span class="date">· {{ date }}</span>
     </div>
     <RouterLink :to="{ name: 'newsDetail', params: { id: props.data.id } }">
       <h2 class="title">{{ props.data.title }}</h2>
       <p class="description">{{ props.data.content }}</p>
     </RouterLink>
     <div class="stats">
-      <span>❤️ 128</span>
-      <span>📄</span>
+      <span>❤️ {{ props.data.article_interaction.likes }}</span>
+      <span>👀 {{ props.data.article_interaction.read }}</span>
+      <a :href="props.data.url">📄</a>
     </div>
 
     <div class="tags">
       <StateButton
-        v-for="(tag, index) in props.data.key_word"
+        v-for="(tag, index) in props.data.keywords"
         :key="index"
         type="tag"
         size="sm"
       >
-        {{ tag }}
+        #{{ tag }}
       </StateButton>
     </div>
   </div>
@@ -70,6 +75,12 @@ const props = defineProps<{ data: INews }>();
   font-size: 1rem;
   color: var(--c-gray-600);
   margin: 15px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 8;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
 }
 
 .stats {
