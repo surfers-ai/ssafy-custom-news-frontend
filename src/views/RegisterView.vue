@@ -8,12 +8,21 @@ import { useUserStore } from "@/store/user";
 import type { IRegisterReq } from "@/types/auth";
 import { ref } from "vue";
 import { RouterLink } from "vue-router";
+import { useValidation } from "@/composables/useValidation";
 
 const name = ref("");
 const email = ref("");
 const password = ref("");
 
+const { validatePwd } = useValidation();
+
 const userStore = useUserStore();
+const pwdError = ref("");
+
+const handlePwdInput = () => {
+  pwdError.value = validatePwd(password.value);
+};
+
 const submitForm = async () => {
   const req: IRegisterReq = {
     username: name.value,
@@ -29,14 +38,16 @@ const submitForm = async () => {
     router.push("/");
   } catch (error) {
     console.error("Registration failed:", error);
-    alert(`회원가입에 실패했습니다. 다시 시도해주세요. ${error}"`);
+    alert(
+      "\n회원가입에 실패했습니다.\n단순한 패턴 및 사용자 정보와 유사한 비밀번호는 사용할 수 없습니다."
+    );
   }
 };
 </script>
 
 <template>
   <div class="signup-page">
-    <div class="header">
+    <div class="signup-header">
       <h1>SSAFYNEWS</h1>
       <p>맞춤형 AI 뉴스 큐레이션</p>
     </div>
@@ -59,18 +70,22 @@ const submitForm = async () => {
         <div>
           <label>비밀번호</label>
           <TheInput
-            placeholder="8자 이상 입력해주세요"
+            placeholder="8자 이상, 숫자/한영을 포함해야 합니다."
             v-model="password"
             type="password"
+            :error="pwdError"
+            @input="handlePwdInput"
           />
         </div>
 
-        <StateButton type="button" isActive>가입하기</StateButton>
+        <StateButton type="button" isActive class="form-btn"
+          >가입하기</StateButton
+        >
       </form>
 
       <div class="login-link">
         <span>이미 계정이 있으신가요?</span>
-        <RouterLink to="login">로그인하기 </RouterLink>
+        <RouterLink to="login">로그인하기</RouterLink>
       </div>
     </div>
 
@@ -88,9 +103,9 @@ const submitForm = async () => {
   min-height: 100vh;
   background-color: #f7fafc;
   font-family: Arial, sans-serif;
-  padding-top: 50px;
+  padding-top: 10px;
 
-  .header {
+  .signup-header {
     text-align: center;
     margin-bottom: 20px;
 
@@ -111,8 +126,7 @@ const submitForm = async () => {
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
+    min-width: 400px;
     text-align: center;
 
     h2 {
@@ -127,6 +141,7 @@ const submitForm = async () => {
     }
 
     form {
+      margin-top: 35px;
       display: flex;
       flex-direction: column;
       gap: 15px;
@@ -139,18 +154,11 @@ const submitForm = async () => {
       }
     }
 
-    .submit-button {
-      background-color: #111;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      padding: 10px 0;
-      font-size: 1rem;
-      cursor: pointer;
+    .form-btn {
+      margin: 20px 0 10px;
     }
 
     .login-link {
-      margin-top: 50px;
       font-size: 0.9rem;
       color: #666;
 

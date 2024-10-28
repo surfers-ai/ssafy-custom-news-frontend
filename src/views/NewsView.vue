@@ -46,7 +46,6 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  margin-top: 50px;
 
   &__tabs {
     display: flex;

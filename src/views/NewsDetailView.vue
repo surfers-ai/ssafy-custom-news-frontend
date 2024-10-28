@@ -142,7 +142,7 @@ watch(
 
 <style scoped lang="scss">
 .back-btn {
-  margin: 50px 0 10px;
+  margin-bottom: 10px;
 }
 
 .news-detail {

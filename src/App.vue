@@ -20,6 +20,6 @@ main {
   min-width: 360px;
   min-height: 100vh;
   margin: 0 auto;
-  padding: 0 15px;
+  padding: 50px 15px;
 }
 </style>

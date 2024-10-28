@@ -30,6 +30,7 @@ const refreshPage = (event: MouseEvent) => {
       </router-link>
 
       <nav class="menus">
+        <router-link to="/board">게시판</router-link>
         <router-link to="/dashboard">대시보드</router-link>
         <button @click="handleAuthAction">
           {{ userStore.isLoggedIn ? "로그아웃" : "로그인" }}

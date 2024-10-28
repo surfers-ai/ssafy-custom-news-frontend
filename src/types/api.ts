@@ -1,13 +1,17 @@
-import type { INews } from "./data";
+import type { IArticle } from "./data";
 
 export interface IChatReq {
   article_id: string;
   question: string;
 }
-export interface IDashboard {
-  message: string;
-  my_favorite_category: Record<string, number>;
-  favorite_key_word: Record<string, number>;
-  number_of_written_articles: Record<string, number>;
-  favorite_articles: INews[];
+
+export interface IBoardResponse {
+  id: number;
+  title: string;
+  writer: string;
+  write_date: Date;
+  category: string;
+  content: string;
+  keywords: string;
+  related_article: IArticle[];
 }

@@ -6,6 +6,9 @@ import LoginView from "@/views/LoginView.vue";
 import NewsDetailView from "@/views/NewsDetailView.vue";
 import RegisterView from "@/views/RegisterView.vue";
 import DashBoardView from "@/views/DashBoardView.vue";
+import BoardView from "@/views/BoardView.vue";
+import BoardListView from "@/views/BoardListView.vue";
+import BoardWriteView from "@/views/BoardWriteView.vue";
 
 const router = createRouter({
   history: createWebHistory("/"),
@@ -24,7 +27,7 @@ const router = createRouter({
       name: "newsDetail",
       component: NewsDetailView,
       props: true,
-      meta: { requiresAuth: true },
+      // meta: { requiresAuth: true },
     },
     {
       path: "/login",
@@ -43,10 +46,22 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: "/mypage",
-      name: "mypage",
-      component: NewsView,
-      meta: { requiresAuth: true },
+      path: "/board",
+      name: "board",
+      component: BoardListView,
+      // meta: { requiresAuth: true },
+    },
+    {
+      path: "/board/1",
+      name: "boardDetail",
+      component: BoardView,
+      // meta: { requiresAuth: true },
+    },
+    {
+      path: "/write",
+      name: "boardWrite",
+      component: BoardWriteView,
+      // meta: { requiresAuth: true },
     },
     {
       path: "/:pathMatch(.*)*",

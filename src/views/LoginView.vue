@@ -3,16 +3,24 @@ import { loginApi } from "@/api/auth";
 import StateButton from "@/common/StateButton.vue";
 import TheInput from "@/common/TheInput.vue";
 import TheFooter from "@/components/TheFooter.vue";
+import { useValidation } from "@/composables/useValidation";
 import router from "@/router";
 import { useUserStore } from "@/store/user";
 import type { ILoginReq } from "@/types/auth";
 import { ref } from "vue";
-import { RouterLink } from "vue-router";
 
 const email = ref("");
 const password = ref("");
 
 const userStore = useUserStore();
+const { validatePwd } = useValidation();
+
+const pwdError = ref("");
+
+const handlePwdInput = () => {
+  pwdError.value = validatePwd(password.value);
+};
+
 const submitForm = async () => {
   const req: ILoginReq = {
     email: email.value,
@@ -24,21 +32,21 @@ const submitForm = async () => {
     userStore.setToken(response.data.access, response.data.refresh);
     router.push("/");
   } catch {
-    alert("다시 시도해주세요.");
+    alert("로그인에 실패하였습니다.");
   }
 };
 </script>
 
 <template>
   <div class="signup-page">
-    <div class="header">
+    <div class="signup-header">
       <h1>SSAFYNEWS</h1>
       <p>맞춤형 AI 뉴스 큐레이션</p>
     </div>
 
-    <div class="signup-form">
-      <h2>로그인</h2>
-      <p>SSAFY 뉴스 서비스에 오신 것을 환영합니다</p>
+    <div class="box">
+      <h2 class="box__title">로그인</h2>
+      <p class="box__subtitle">SSAFY 뉴스 서비스에 오신 것을 환영합니다</p>
 
       <form @submit.prevent="submitForm">
         <div>
@@ -49,9 +57,11 @@ const submitForm = async () => {
         <div>
           <label>비밀번호</label>
           <TheInput
-            placeholder="6자 이상 입력해주세요"
+            placeholder="숫자, 한영 포함 8자 이상 입력해주세요."
             v-model="password"
             type="password"
+            :error="pwdError"
+            @input="handlePwdInput"
           />
         </div>
 
@@ -82,7 +92,7 @@ const submitForm = async () => {
   background-color: #f7fafc;
   font-family: Arial, sans-serif;
 
-  .header {
+  .signup-header {
     text-align: center;
     margin-bottom: 20px;
 
@@ -98,22 +108,21 @@ const submitForm = async () => {
     }
   }
 
-  .signup-form {
+  .box {
     background-color: #fff;
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
+    min-width: 400px;
     text-align: center;
 
-    h2 {
+    &__title {
       font-size: 1.5rem;
       color: #111;
       margin-bottom: 10px;
     }
 
-    p {
+    &__subtitle {
       color: #666;
     }
 
@@ -122,7 +131,7 @@ const submitForm = async () => {
       flex-direction: column;
       gap: 15px;
       text-align: left;
-      margin: 40px 0;
+      margin-top: 40px;
 
       label {
         display: block;
@@ -131,11 +140,12 @@ const submitForm = async () => {
       }
 
       .submit-button {
-        margin-top: 32px;
+        margin-top: 30px;
       }
     }
 
     .login-link {
+      margin-top: 15px;
       font-size: 0.9rem;
       color: #666;
 
