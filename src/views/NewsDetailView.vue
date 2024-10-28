@@ -12,7 +12,6 @@ import type { INews } from "@/types/data";
 import NewsPreview2 from "@/components/NewsPreview2.vue";
 
 const news = ref();
-
 const route = useRoute();
 const newsId = ref<string>("0");
 const relatedNews = ref<INews[] | null>(null);
@@ -25,21 +24,31 @@ const goBack = () => {
 
 const liked = ref(false);
 const likeCount = ref(0);
+const isAnimating = ref(false);
 
 async function toggleLike() {
   try {
     await postLike({ article_id: newsId.value });
     liked.value = true;
     likeCount.value += 1;
+    triggerHeartAnimation();
   } catch {
     try {
       await deleteLike(newsId.value);
       liked.value = false;
       likeCount.value -= 1;
+      triggerHeartAnimation();
     } catch (deleteError) {
       console.error("Error removing like:", deleteError);
     }
   }
+}
+
+function triggerHeartAnimation() {
+  isAnimating.value = true;
+  setTimeout(() => {
+    isAnimating.value = false;
+  }, 600);
 }
 
 async function fetchNews() {
@@ -49,17 +58,14 @@ async function fetchNews() {
     const response = await getNews(Number(newsId.value));
     const fetchedNews = response.data.data;
     news.value = fetchedNews;
-
     likeCount.value = fetchedNews.article_interaction.likes;
-
     relatedNews.value = fetchedNews.related_articles.articles;
-    console.log("Successfully assigned to relatedNews:", relatedNews.value);
   } catch (error) {
     console.error("Error fetching news:", error);
   }
 }
 
-onMounted(async () => {
+onMounted(() => {
   fetchNews();
 });
 
@@ -101,16 +107,24 @@ watch(
               {{ tag }}
             </StateButton>
           </div>
-          <div class="content__emoji">
-            <button @click="toggleLike" class="emoji-btn">
-              <span>{{ liked ? "❤️" : "🤍" }}</span> {{ likeCount }}
-            </button>
-            <div class="emoji-btn">
-              <span class="content__emoji-eye"> 👀 </span
-              >{{ news?.article_interaction.read }}
-            </div>
 
-            <a :href="news.url">📄</a>
+          <div class="content__footer">
+            <div class="content__emoji">
+              <span class="emoji-btn"> ❤️ {{ likeCount }} </span>
+              <div class="emoji-btn">
+                <span class="content__emoji-eye"> 👀 </span
+                >{{ news?.article_interaction.read }}
+              </div>
+
+              <a :href="news.url">📄</a>
+            </div>
+            <button @click="toggleLike" class="emoji-btn">
+              <span>{{ liked ? "❤️" : "🤍" }} 좋아요</span>
+            </button>
+            <!-- 애니메이션 하트 -->
+            <transition name="heart-float">
+              <span v-if="isAnimating" class="floating-heart">❤️</span>
+            </transition>
           </div>
         </div>
       </ContentBox>
@@ -180,8 +194,14 @@ watch(
   margin: 16px 0;
   line-height: 1.6;
 
-  &__emoji {
+  &__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-top: 30px;
+  }
+
+  &__emoji {
     color: #888;
     font-size: 16px;
     display: flex;
@@ -190,15 +210,14 @@ watch(
     &-eye {
       font-size: 17px;
     }
-
-    .emoji-btn {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      height: 18px;
-      color: #888;
-    }
   }
+}
+
+.emoji-btn {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  color: #888;
 }
 
 .tags {
@@ -206,5 +225,27 @@ watch(
   gap: 8px;
   flex-wrap: wrap;
   margin-top: 15px;
+}
+
+.floating-heart {
+  position: absolute;
+  font-size: 24px;
+  color: red;
+  animation: heartFloat 0.6s ease-out forwards;
+}
+
+@keyframes heartFloat {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translateY(-20px) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-40px) scale(0.8);
+  }
 }
 </style>

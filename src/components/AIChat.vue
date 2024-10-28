@@ -36,8 +36,10 @@ const sendMessage = async () => {
 
 <template>
   <ContentBox class="assistant">
-    <h1 class="title">🤖 AI 뉴스 어시스턴트</h1>
-    <p class="description">이 기사에 대해 궁금한 점을 자유롭게 물어보세요!</p>
+    <h1 class="title">🤖 AI 뉴스비서 <strong>뉴비</strong></h1>
+    <p class="description">
+      <strong>뉴비</strong>에게 이 기사에 대해 궁금한 점을 자유롭게 물어보세요!
+    </p>
 
     <div class="chat" v-if="messages.length > 0">
       <div
@@ -81,6 +83,10 @@ const sendMessage = async () => {
     font-weight: 700;
     font-size: 18px;
     margin-bottom: 10px;
+    strong {
+      color: #1c1c94;
+      font-weight: 600;
+    }
   }
 
   .description {

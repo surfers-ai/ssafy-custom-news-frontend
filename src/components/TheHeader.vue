@@ -1,20 +1,39 @@
 <script setup lang="ts">
 import { useAuth } from "@/composables/useAuth";
-import { RouterLink } from "vue-router";
+import { useUserStore } from "@/store/user";
+import { RouterLink, useRouter } from "vue-router";
 
 const { logoutUser } = useAuth();
+const userStore = useUserStore();
+const router = useRouter();
+
+const handleAuthAction = () => {
+  if (userStore.isLoggedIn) {
+    logoutUser();
+  } else {
+    router.push("/login");
+  }
+};
+const refreshPage = (event: MouseEvent) => {
+  event.preventDefault();
+  router.push("/").then(() => {
+    window.location.reload();
+  });
+};
 </script>
 
 <template>
   <div class="header__container">
     <header>
-      <router-link to="/">
+      <router-link to="/" @click="refreshPage">
         <span class="logo"> SSAFYNEWS </span>
       </router-link>
 
       <nav class="menus">
         <router-link to="/dashboard">대시보드</router-link>
-        <button @click="logoutUser">로그아웃</button>
+        <button @click="handleAuthAction">
+          {{ userStore.isLoggedIn ? "로그아웃" : "로그인" }}
+        </button>
       </nav>
     </header>
   </div>

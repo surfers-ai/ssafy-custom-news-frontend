@@ -18,14 +18,13 @@ const router = createRouter({
       path: "/news",
       name: "News",
       component: NewsView,
-      // meta: { requiresAuth: true },
     },
     {
       path: "/news/:id",
       name: "newsDetail",
       component: NewsDetailView,
       props: true,
-      // meta: { requiresAuth: true },
+      meta: { requiresAuth: true },
     },
     {
       path: "/login",
@@ -41,7 +40,7 @@ const router = createRouter({
       path: "/dashboard",
       name: "dashboard",
       component: DashBoardView,
-      // meta: { requiresAuth: true },
+      meta: { requiresAuth: true },
     },
     {
       path: "/mypage",
@@ -62,6 +61,7 @@ router.beforeEach((to, from, next) => {
   const isRequiresAuth = to.matched.some((record) => record.meta.requiresAuth);
 
   if (isRequiresAuth && !userStore.isLoggedIn) {
+    alert("로그인해주세요.");
     next({
       path: "/login",
     });

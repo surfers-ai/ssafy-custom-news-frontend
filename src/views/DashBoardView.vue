@@ -61,14 +61,37 @@ const readData = ref({
 const options = {
   plugins: {
     legend: {
-      display: false,
+      display: true,
+      position: "right" as const,
+      labels: {
+        padding: 15,
+        boxWidth: 20,
+        font: {
+          size: 14,
+        },
+      },
     },
-  },
-  scales: {
-    y: {
-      beginAtZero: true,
-      min: 0,
-      max: 1,
+    tooltip: {
+      callbacks: {
+        label: (context: any) => {
+          const label = context.label || "";
+          const value = context.raw;
+          return `${label}: ${(value * 100).toFixed(1)}%`;
+        },
+      },
+    },
+    layout: {
+      padding: {
+        right: 40, // 레전드와 차트 사이의 간격을 늘리기 위해 오른쪽 패딩 추가
+      },
+    },
+
+    scales: {
+      y: {
+        beginAtZero: true,
+        min: 0,
+        max: 1,
+      },
     },
   },
 };
@@ -114,13 +137,16 @@ async function init() {
             backgroundColor: [
               "#F67C6C",
               "#7DA56F",
-              "#FCDC4B",
               "#4975C1",
+              "#FCDC4B",
               "#FFB4CE",
             ],
           },
         ],
       };
+      categories.value = Object.entries(data.my_favorite_category)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3);
     }
     // 키워드 데이터 설정
     if (data.my_favorite_key_word) {
@@ -180,7 +206,7 @@ onMounted(() => {
               }"
               class="category__label"
             >
-              {{ category[0] }} {{ category[1] }}%
+              {{ index + 1 }}순위: {{ category[0] }} ({{ category[1] * 100 }}%)
             </span>
           </div>
         </div>
@@ -232,11 +258,11 @@ onMounted(() => {
 }
 .category {
   &__chart {
-    height: 280px;
+    height: 300px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 50px;
+    gap: 20px;
     padding-bottom: 30px;
   }
   &__label {
