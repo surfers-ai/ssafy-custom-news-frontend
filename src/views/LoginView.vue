@@ -29,8 +29,11 @@ const submitForm = async () => {
 
   try {
     const response = await loginApi(req);
-    userStore.setToken(response.data.access, response.data.refresh);
-    router.push("/");
+    if (response.status === 200) {
+      userStore.setToken(response.data.access, response.data.refresh);
+      userStore.username = response.data.username;
+      router.push("/news");
+    }
   } catch {
     alert("로그인에 실패하였습니다.");
   }
@@ -62,6 +65,7 @@ const submitForm = async () => {
             type="password"
             :error="pwdError"
             @input="handlePwdInput"
+            @keyup.enter="submitForm"
           />
         </div>
 

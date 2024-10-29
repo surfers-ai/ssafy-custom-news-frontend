@@ -3,13 +3,14 @@ import { ref } from "vue";
 import ContentBox from "@/common/ContentBox.vue";
 import TheInput from "@/common/TheInput.vue";
 import StateButton from "@/common/StateButton.vue";
+import { postBoard } from "@/api/api";
 
 const title = ref("");
 const category = ref("기술");
 const content = ref("");
 const tags = ref<string[]>([]);
 
-const categories = ["토론", "리뷰", "질문", "정보공유"];
+const categories = ["토론", "자유", "질문", "정보"];
 
 const newTag = ref("");
 function addTag() {
@@ -22,21 +23,30 @@ function addTag() {
 function removeTag(tag: string) {
   tags.value = tags.value.filter((t) => t !== tag);
 }
-
-function savePost() {
+async function handlePostBoard() {
   const postData = {
     title: title.value,
     category: category.value,
     content: content.value,
-    tags: tags.value,
+    keywords: tags.value,
   };
-  console.log(postData);
+  try {
+    const response = await postBoard(postData);
+    console.log("Post successful:", response);
+  } catch (error) {
+    console.error("Error posting data:", error);
+  }
 }
 </script>
 <template>
   <div class="post-form">
     <div class="submit-btn-container">
-      <StateButton size="md" @click="savePost" isActive class="submit-btn">
+      <StateButton
+        size="md"
+        @click="handlePostBoard"
+        isActive
+        class="submit-btn"
+      >
         작성 완료
       </StateButton>
     </div>
@@ -71,7 +81,11 @@ function savePost() {
       <div class="post-form__field">
         <label>해시태그</label>
         <div class="post-form__tags">
-          <TheInput v-model="newTag" placeholder="해시태그를 입력하세요" />
+          <TheInput
+            v-model="newTag"
+            placeholder="해시태그를 입력하세요"
+            @keyup.enter="addTag"
+          />
           <StateButton @click="addTag" isActive>추가</StateButton>
         </div>
         <div class="post-form__tag-list">

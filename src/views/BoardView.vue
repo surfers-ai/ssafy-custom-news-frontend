@@ -6,50 +6,97 @@ import StateButton from "@/common/StateButton.vue";
 import { useDate } from "@/composables/useDate";
 import router from "@/router";
 import LeftArrow from "@/components/icon/LeftArrow.svg";
-import { getNews } from "@/api/api";
+import { getBoard, postComment } from "@/api/api";
 import NewsPreview2 from "@/components/NewsPreview2.vue";
 import { dummyNewsData } from "@/assets/data/dummy";
 import CommentBox from "@/components/CommentBox.vue";
-import { dummyComments } from "@/assets/data/dummy";
 import TheInput from "@/common/TheInput.vue";
+import { useUserStore } from "@/store/user";
 
-const news = ref(dummyNewsData[0]);
+const news = ref();
 
 const route = useRoute();
 const newsId = ref<string>("0");
-// const relatedNews = ref<INews[] | null>(null);
+
 const relatedNews = ref(dummyNewsData);
+
+const newComment = ref("");
+
+const comments = ref([
+  {
+    author: "dev_kim",
+    date: "2024.10.24 15:10",
+    content:
+      "AI는 결국 도구일 뿐이라고 생각합니다. 기본기가 더 중요해질 것 같네요.",
+  },
+  {
+    author: "code_lee",
+    date: "2024.10.24 15:12",
+    content:
+      "기본기를 바탕으로 AI를 활용하는 방법을 배우는 것이 중요하다고 봅니다.",
+  },
+]);
+
+const userStore = useUserStore();
+
+async function addComment() {
+  if (newComment.value.trim()) {
+    try {
+      await postComment(newsId.value, newComment.value);
+
+      comments.value.push({
+        author: userStore.username,
+        date: new Date().toISOString().split("T")[0],
+        content: newComment.value,
+      });
+
+      newComment.value = "";
+    } catch {
+      alert("댓글 추가에 실패했습니다. 다시 시도해주세요.");
+    }
+  }
+}
 
 const { formatDate } = useDate();
 
 const goBack = () => {
-  router.push("/news");
+  router.push("/board");
 };
 
-// TODO: api
-async function fetchNews() {
+async function fetchBoard() {
   newsId.value = route.params.id as string;
 
   try {
-    const response = await getNews(Number(newsId.value));
-    const fetchedNews = response.data.data;
-    news.value = fetchedNews;
+    const response = await getBoard(newsId.value);
+    console.log(response);
+    const fetchedBoard = response.data.data;
+    news.value = fetchedBoard;
 
-    relatedNews.value = fetchedNews.related_articles.articles;
+    relatedNews.value = fetchedBoard.related_articles.articles;
   } catch (error) {
     console.error("Error fetching news:", error);
   }
 }
 
+// async function fetchLike() {
+//   try {
+//     const response = await getLikeStatus(newsId.value);
+//     const fetchedNews = response.data.data;
+//     news.value = fetchedNews;
+//   } catch (error) {
+//     console.error("Error fetching news:", error);
+//   }
+// }
+
 onMounted(() => {
-  fetchNews();
+  fetchBoard();
 });
 
 watch(
   () => route.params.id,
   (newId) => {
     newsId.value = newId as string;
-    fetchNews();
+    fetchBoard();
   }
 );
 </script>
@@ -70,7 +117,7 @@ watch(
                   <span>{{ news.writer }}</span>
                   <span> 🕒 {{ formatDate(news.write_date) }}</span>
                 </div>
-                <span>조회수 {{ news?.article_interaction.read }}</span>
+                <!-- <span>조회수 {{ news?.article_interaction.read }}</span> -->
               </div>
             </div>
             <p class="boardview__text">{{ news?.content }}</p>
@@ -89,11 +136,9 @@ watch(
         <ContentBox>
           <h1 class="boardview__comments-title">
             댓글
-            <span class="boardview__comments-count">{{
-              dummyComments.length
-            }}</span>
+            <span class="boardview__comments-count">{{ comments.length }}</span>
           </h1>
-          <div v-for="(comment, index) in dummyComments" :key="index">
+          <div v-for="(comment, index) in comments" :key="index">
             <CommentBox
               :author="comment.author"
               :date="comment.date"
@@ -102,8 +147,14 @@ watch(
           </div>
 
           <div class="comment__write">
-            <TheInput placeholder="질문을 입력하세요..." />
-            <StateButton class="comment__write-btn" isActive>작성</StateButton>
+            <TheInput
+              v-model="newComment"
+              placeholder="댓글을 입력하세요..."
+              @keyup.enter="addComment"
+            />
+            <StateButton class="comment__write-btn" isActive @click="addComment"
+              >작성</StateButton
+            >
           </div>
         </ContentBox>
       </div>

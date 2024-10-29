@@ -27,7 +27,7 @@ const router = createRouter({
       name: "newsDetail",
       component: NewsDetailView,
       props: true,
-      // meta: { requiresAuth: true },
+      meta: { requiresAuth: true },
     },
     {
       path: "/login",
@@ -49,19 +49,18 @@ const router = createRouter({
       path: "/board",
       name: "board",
       component: BoardListView,
-      // meta: { requiresAuth: true },
     },
     {
-      path: "/board/1",
+      path: "/board/:id",
       name: "boardDetail",
       component: BoardView,
-      // meta: { requiresAuth: true },
+      meta: { requiresAuth: true },
     },
     {
       path: "/write",
       name: "boardWrite",
       component: BoardWriteView,
-      // meta: { requiresAuth: true },
+      meta: { requiresAuth: true },
     },
     {
       path: "/:pathMatch(.*)*",
@@ -76,7 +75,7 @@ router.beforeEach((to, from, next) => {
   const isRequiresAuth = to.matched.some((record) => record.meta.requiresAuth);
 
   if (isRequiresAuth && !userStore.isLoggedIn) {
-    alert("로그인해주세요.");
+    alert("로그인이 필요합니다.");
     next({
       path: "/login",
     });

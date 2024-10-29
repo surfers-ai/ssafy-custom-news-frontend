@@ -14,4 +14,12 @@ export interface IBoardResponse {
   content: string;
   keywords: string;
   related_article: IArticle[];
+  comments: { comments: string[] };
+}
+
+export interface IBoardReq {
+  title: string;
+  category: string;
+  content: string;
+  keywords: string[];
 }

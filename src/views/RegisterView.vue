@@ -33,9 +33,12 @@ const submitForm = async () => {
 
   try {
     const response = await registerApi(req);
-    userStore.setToken(response.data.access, response.data.refresh);
-    alert("회원가입이 완료되었습니다!");
-    router.push("/");
+    if (response.status === 201) {
+      console.log(response)
+      userStore.setToken(response.data.access, response.data.refresh);
+      alert("회원가입이 완료되었습니다!");
+      router.push("/login");
+    }
   } catch (error) {
     console.error("Registration failed:", error);
     alert(

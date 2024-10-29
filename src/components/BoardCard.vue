@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import StateButton from "@/common/StateButton.vue";
 import { useDate } from "@/composables/useDate";
-import type { INews } from "@/types/data";
+import type { IBoard } from "@/types/data";
 import { computed } from "vue";
 
-const props = defineProps<{ data: INews }>();
+const props = defineProps<{ data: IBoard }>();
 
 const { formatDate } = useDate();
 const date = computed(() => formatDate(props.data.write_date));
@@ -19,14 +19,24 @@ const date = computed(() => formatDate(props.data.write_date));
       <span class="subcategory">{{ props.data.writer }}</span>
       <span class="date">· {{ date }}</span>
     </div>
-    <RouterLink :to="{ name: 'boardDetail', params: { id: 1 } }">
+    <RouterLink :to="{ name: 'boardDetail', params: { id: props.data.id } }">
       <h2 class="title">{{ props.data.title }}</h2>
       <p class="description">{{ props.data.content }}</p>
     </RouterLink>
     <div class="stats">
-      <span>👍 {{ props.data.article_interaction.likes }}</span>
+      <!-- <span>👍 {{ props.data.article_interaction.likes }}</span>
       <span>💬 {{ props.data.article_interaction.read }}</span>
-      <span>👀 {{ props.data.article_interaction.read }}</span>
+      <span>👀 {{ props.data.article_interaction.read }}</span> -->
+    </div>
+    <div class="tags">
+      <StateButton
+        v-for="(tag, index) in props.data.keywords"
+        :key="index"
+        type="tag"
+        size="sm"
+      >
+        #{{ tag }}
+      </StateButton>
     </div>
   </div>
 </template>

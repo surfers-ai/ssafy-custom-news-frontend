@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, watch } from "vue";
 import ContentBox from "@/common/ContentBox.vue";
 import { useNewsStore } from "@/store/news";
 import StateButton from "@/common/StateButton.vue";
@@ -7,19 +7,51 @@ import TheInput from "@/common/TheInput.vue";
 import { dummyNewsData } from "@/assets/data/dummy";
 import { ref } from "vue";
 import BoardCard from "@/components/BoardCard.vue";
+import type { IBoard } from "@/types/data";
+import { getBoardList } from "@/api/api";
 
-const tabs = ["전체", "토론", "리뷰", "질문", "정보공유"];
-const activeTab = ref(tabs[0]);
+const tabs = [
+  { id: 0, value: "전체" },
+  { id: 1, value: "토론" },
+  { id: 2, value: "리뷰" },
+  { id: 3, value: "질문" },
+  { id: 4, value: "정보공유" },
+];
+const activeTab = ref(tabs[0].id);
 
-function selectTab(tab: string) {
-  activeTab.value = tab;
+function selectTab(id: number) {
+  activeTab.value = id;
 }
 
-const newsStore = useNewsStore();
+const boadList = ref<IBoard[]>([]);
+const Boards = ref<Record<number, IBoard[]>>({});
 
-onMounted(() => {
-  newsStore.fetchNews(newsStore.currentTab);
-});
+const loadBoards = async (tabId: number) => {
+  if (Boards.value[tabId]) {
+    boadList.value = Boards.value[tabId];
+    return;
+  }
+
+  try {
+    const data = await fetchBoard(tabId);
+    boadList.value = data;
+    Boards.value[tabId] = data;
+  } catch (error) {
+    console.error("Error fetching news:", error);
+  }
+};
+
+watch(
+  () => activeTab.value,
+  (tabId) => loadBoards(tabId),
+  { immediate: true }
+);
+
+async function fetchBoard(tabId: number): Promise<IBoard[]> {
+  const category = tabs.find((tab) => tab.id === tabId)?.value || "";
+  const response = await getBoardList(category);
+  return response.data.data;
+}
 </script>
 
 <template>
@@ -30,29 +62,19 @@ onMounted(() => {
   <ContentBox>
     <div class="tab-navigation">
       <button
-        v-for="(tab, index) in tabs"
-        :key="index"
+        v-for="tab in tabs"
+        :key="tab.id"
         :class="[
           'tab-navigation__tab',
-          { 'tab-navigation__tab--active': activeTab === tab },
+          { 'tab-navigation__tab--active': activeTab === tab.id },
         ]"
-        @click="selectTab(tab)"
+        @click="selectTab(tab.id)"
       >
-        {{ tab }}
+        {{ tab.value }}
       </button>
     </div>
-    <div class="filter">
-      <span>총 2개의 글</span>
-      <div class="filter-tab">
-        <select>
-          <option>최신순</option>
-          <option>인기순</option>
-        </select>
-        <TheInput placeholder="검색어를 입력하세요" />
-      </div>
-    </div>
 
-    <div v-for="(board, idx) in dummyNewsData" :key="idx">
+    <div v-for="(board, idx) in boadList" :key="idx">
       <BoardCard :data="board" />
     </div>
   </ContentBox>
