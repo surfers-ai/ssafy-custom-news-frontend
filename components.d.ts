@@ -8,6 +8,8 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AIChat: typeof import('./src/components/AIChat.vue')['default']
+    BoardCard: typeof import('./src/components/BoardCard.vue')['default']
+    CommentBox: typeof import('./src/components/CommentBox.vue')['default']
     NewsCard: typeof import('./src/components/NewsCard.vue')['default']
     NewsPreview: typeof import('./src/components/NewsPreview.vue')['default']
     NewsPreview2: typeof import('./src/components/NewsPreview2.vue')['default']

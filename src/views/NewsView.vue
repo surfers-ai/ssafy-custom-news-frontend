@@ -1,17 +1,44 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { ref, watch } from "vue";
 
 import ContentBox from "@/common/ContentBox.vue";
 import StateButton from "@/common/StateButton.vue";
 import NewsCard from "@/components/NewsCard.vue";
-import { useNewsStore } from "@/store/news";
 import { tabs } from "@/assets/data/tabs";
+import { getNewsList } from "@/api/api";
+import type { INews } from "@/types/data";
+import { useNewsStore } from "@/store/news";
 
 const newsStore = useNewsStore();
+const newsList = ref<INews[]>([]);
+const cachedNews = ref<Record<number, INews[]>>({});
 
-onMounted(() => {
-  newsStore.fetchNews(newsStore.currentTab);
-});
+const loadNews = async (tabId: number) => {
+  if (cachedNews.value[tabId]) {
+    newsList.value = cachedNews.value[tabId];
+    return;
+  }
+
+  try {
+    const data = await fetchNews(tabId);
+    newsList.value = data;
+    cachedNews.value[tabId] = data;
+  } catch (error) {
+    console.error("Error fetching news:", error);
+  }
+};
+
+watch(
+  () => newsStore.currentTab,
+  (tabId) => loadNews(tabId),
+  { immediate: true }
+);
+
+async function fetchNews(tabId: number): Promise<INews[]> {
+  const category = tabs.find((tab) => tab.id === tabId)?.value || "";
+  const response = await getNewsList(category);
+  return response.data.data;
+}
 </script>
 
 <template>
@@ -30,11 +57,7 @@ onMounted(() => {
 
     <ContentBox class="news__box">
       <h1 class="news__box__title">🤖 AI 맞춤 추천 뉴스</h1>
-      <div
-        class="news__box__cards"
-        v-for="news in newsStore.newsList"
-        :key="news.id"
-      >
+      <div class="news__box__cards" v-for="news in newsList" :key="news.id">
         <NewsCard :data="news" />
       </div>
     </ContentBox>
@@ -46,7 +69,6 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  margin-top: 50px;
 
   &__tabs {
     display: flex;

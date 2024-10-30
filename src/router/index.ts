@@ -6,6 +6,9 @@ import LoginView from "@/views/LoginView.vue";
 import NewsDetailView from "@/views/NewsDetailView.vue";
 import RegisterView from "@/views/RegisterView.vue";
 import DashBoardView from "@/views/DashBoardView.vue";
+import BoardView from "@/views/BoardView.vue";
+import BoardListView from "@/views/BoardListView.vue";
+import BoardWriteView from "@/views/BoardWriteView.vue";
 
 const router = createRouter({
   history: createWebHistory("/"),
@@ -43,9 +46,20 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: "/mypage",
-      name: "mypage",
-      component: NewsView,
+      path: "/board",
+      name: "board",
+      component: BoardListView,
+    },
+    {
+      path: "/board/:id",
+      name: "boardDetail",
+      component: BoardView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/write",
+      name: "boardWrite",
+      component: BoardWriteView,
       meta: { requiresAuth: true },
     },
     {
@@ -61,7 +75,7 @@ router.beforeEach((to, from, next) => {
   const isRequiresAuth = to.matched.some((record) => record.meta.requiresAuth);
 
   if (isRequiresAuth && !userStore.isLoggedIn) {
-    alert("로그인해주세요.");
+    alert("로그인이 필요합니다.");
     next({
       path: "/login",
     });

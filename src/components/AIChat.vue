@@ -25,7 +25,7 @@ const sendMessage = async () => {
   try {
     const response = await postChat(chatRequest);
     const chatbotReply =
-      response.data?.history || "챗봇 응답을 가져올 수 없습니다.";
+      response.data.data?.response || "챗봇 응답을 가져올 수 없습니다.";
     messages.value.push(chatbotReply);
   } catch (error) {
     console.error("챗봇 응답 오류:", error);

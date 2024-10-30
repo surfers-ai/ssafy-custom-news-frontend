@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { computed, useAttrs } from "vue";
+import { computed, useAttrs, defineProps, withDefaults } from "vue";
+import { useRouter } from "vue-router";
 
 interface IButtonProps {
   class?: string;
   type?: "state" | "tag" | "button";
   size?: "sm" | "md";
   isActive?: boolean;
+  to?: string;
 }
 
 const props = withDefaults(defineProps<IButtonProps>(), {
@@ -14,10 +16,18 @@ const props = withDefaults(defineProps<IButtonProps>(), {
   isActive: false,
 });
 
+const router = useRouter();
+
 const buttonSizeClass = computed(() => props.size);
 const buttonTypeClass = computed(() => props.type);
 
 const attrs = useAttrs();
+
+function handleClick() {
+  if (props.to) {
+    router.push(props.to);
+  }
+}
 </script>
 
 <template>
@@ -30,6 +40,7 @@ const attrs = useAttrs();
       { active: props.isActive },
     ]"
     v-bind="attrs"
+    @click="handleClick"
   >
     <slot></slot>
   </button>
@@ -45,6 +56,7 @@ const attrs = useAttrs();
   background-color: white;
   color: var(--c-text);
   text-align: center;
+  cursor: pointer;
 
   &.tag {
     background-color: #f5f5f5;
@@ -73,7 +85,7 @@ const attrs = useAttrs();
 
   &.md {
     padding: 8px 12px;
-    font-size: 16px;
+    font-size: 14px;
   }
 
   &:disabled {

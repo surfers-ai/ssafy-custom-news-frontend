@@ -7,7 +7,7 @@ import AIChat from "@/components/AIChat.vue";
 import { useDate } from "@/composables/useDate";
 import router from "@/router";
 import LeftArrow from "@/components/icon/LeftArrow.svg";
-import { deleteLike, getNews, postLike } from "@/api/api";
+import { deleteLike, getLikeStatus, getNews, postLike } from "@/api/api";
 import type { INews } from "@/types/data";
 import NewsPreview2 from "@/components/NewsPreview2.vue";
 
@@ -65,8 +65,19 @@ async function fetchNews() {
   }
 }
 
+async function fetchLike() {
+  try {
+    const response = await getLikeStatus(newsId.value);
+    console.log(response.data.data);
+    if (response.data.is_liked) liked.value = true;
+  } catch (error) {
+    console.error("Error fetching news:", error);
+  }
+}
+
 onMounted(() => {
   fetchNews();
+  fetchLike();
 });
 
 watch(
@@ -74,6 +85,7 @@ watch(
   (newId) => {
     newsId.value = newId as string;
     fetchNews();
+    fetchLike();
   }
 );
 </script>
@@ -110,7 +122,10 @@ watch(
 
           <div class="content__footer">
             <div class="content__emoji">
-              <span class="emoji-btn"> ❤️ {{ likeCount }} </span>
+              <span class="emoji-btn">
+                <span v-if="liked"> ❤️ </span> <span v-else>🤍</span
+                >{{ likeCount }}
+              </span>
               <div class="emoji-btn">
                 <span class="content__emoji-eye"> 👀 </span
                 >{{ news?.article_interaction.read }}
@@ -142,7 +157,7 @@ watch(
 
 <style scoped lang="scss">
 .back-btn {
-  margin: 50px 0 10px;
+  margin-bottom: 10px;
 }
 
 .news-detail {

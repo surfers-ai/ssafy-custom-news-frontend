@@ -1,0 +1,283 @@
+<script setup lang="ts">
+import { onMounted, ref, watch } from "vue";
+import { useRoute } from "vue-router";
+import ContentBox from "@/common/ContentBox.vue";
+import StateButton from "@/common/StateButton.vue";
+import { useDate } from "@/composables/useDate";
+import router from "@/router";
+import LeftArrow from "@/components/icon/LeftArrow.svg";
+import { getBoard, postComment } from "@/api/api";
+import NewsPreview2 from "@/components/NewsPreview2.vue";
+import { dummyNewsData } from "@/assets/data/dummy";
+import CommentBox from "@/components/CommentBox.vue";
+import TheInput from "@/common/TheInput.vue";
+import { useUserStore } from "@/store/user";
+
+const news = ref();
+
+const route = useRoute();
+const newsId = ref<string>("0");
+
+const relatedNews = ref(dummyNewsData);
+
+const newComment = ref("");
+
+const comments = ref([
+  {
+    author: "dev_kim",
+    date: "2024.10.24 15:10",
+    content:
+      "AI는 결국 도구일 뿐이라고 생각합니다. 기본기가 더 중요해질 것 같네요.",
+  },
+  {
+    author: "code_lee",
+    date: "2024.10.24 15:12",
+    content:
+      "기본기를 바탕으로 AI를 활용하는 방법을 배우는 것이 중요하다고 봅니다.",
+  },
+]);
+
+const userStore = useUserStore();
+
+async function addComment() {
+  if (newComment.value.trim()) {
+    try {
+      await postComment(newsId.value, newComment.value);
+
+      comments.value.push({
+        author: userStore.username,
+        date: new Date().toISOString().split("T")[0],
+        content: newComment.value,
+      });
+
+      newComment.value = "";
+    } catch {
+      alert("댓글 추가에 실패했습니다. 다시 시도해주세요.");
+    }
+  }
+}
+
+const { formatDate } = useDate();
+
+const goBack = () => {
+  router.push("/board");
+};
+
+async function fetchBoard() {
+  newsId.value = route.params.id as string;
+
+  try {
+    const response = await getBoard(newsId.value);
+    console.log(response);
+    const fetchedBoard = response.data.data;
+    news.value = fetchedBoard;
+
+    relatedNews.value = fetchedBoard.related_articles.articles;
+  } catch (error) {
+    console.error("Error fetching news:", error);
+  }
+}
+
+// async function fetchLike() {
+//   try {
+//     const response = await getLikeStatus(newsId.value);
+//     const fetchedNews = response.data.data;
+//     news.value = fetchedNews;
+//   } catch (error) {
+//     console.error("Error fetching news:", error);
+//   }
+// }
+
+onMounted(() => {
+  fetchBoard();
+});
+
+watch(
+  () => route.params.id,
+  (newId) => {
+    newsId.value = newId as string;
+    fetchBoard();
+  }
+);
+</script>
+<template>
+  <button @click="goBack" class="boardview__back-btn"><LeftArrow /></button>
+  <div v-if="news" class="boardview">
+    <div class="boardview__content">
+      <div class="boardview__main">
+        <ContentBox>
+          <div class="boardview__article">
+            <div class="boardview__header">
+              <StateButton type="state" size="sm" isActive disabled>{{
+                news?.category
+              }}</StateButton>
+              <h2 class="boardview__title">{{ news?.title }}</h2>
+              <div class="boardview__subtitle">
+                <div class="boardview__writer">
+                  <span>{{ news.writer }}</span>
+                  <span> 🕒 {{ formatDate(news.write_date) }}</span>
+                </div>
+                <!-- <span>조회수 {{ news?.article_interaction.read }}</span> -->
+              </div>
+            </div>
+            <p class="boardview__text">{{ news?.content }}</p>
+            <div class="boardview__tags">
+              <StateButton
+                v-for="(tag, index) in news.keywords"
+                :key="index"
+                type="tag"
+                size="sm"
+              >
+                #{{ tag }}
+              </StateButton>
+            </div>
+          </div>
+        </ContentBox>
+        <ContentBox>
+          <h1 class="boardview__comments-title">
+            댓글
+            <span class="boardview__comments-count">{{ comments.length }}</span>
+          </h1>
+          <div v-for="(comment, index) in comments" :key="index">
+            <CommentBox
+              :author="comment.author"
+              :date="comment.date"
+              :content="comment.content"
+            />
+          </div>
+
+          <div class="comment__write">
+            <TheInput
+              v-model="newComment"
+              placeholder="댓글을 입력하세요..."
+              @keyup.enter="addComment"
+            />
+            <StateButton class="comment__write-btn" isActive @click="addComment"
+              >작성</StateButton
+            >
+          </div>
+        </ContentBox>
+      </div>
+
+      <ContentBox class="boardview__sidebar">
+        <h1 class="boardview__related-title">📰 관련 기사</h1>
+        <div v-for="(news, index) in relatedNews" :key="index">
+          <NewsPreview2 :to="`/news/${news.id}`" :news="news" />
+        </div>
+      </ContentBox>
+    </div>
+  </div>
+</template>
+
+<style scoped lang="scss">
+.boardview {
+  &__back-btn {
+    margin-bottom: 10px;
+  }
+
+  &__content {
+    display: flex;
+    gap: 20px;
+  }
+
+  &__main {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  &__sidebar {
+    flex: 1;
+    height: fit-content;
+  }
+
+  @media (max-width: 768px) {
+    &__content {
+      flex-direction: column;
+    }
+  }
+}
+
+.boardview__article {
+  font-size: 1rem;
+  padding: 20px;
+}
+
+.boardview__header {
+  color: #888;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+
+.boardview__title {
+  margin: 12px 0;
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #1c1c1e;
+}
+
+.boardview__subtitle {
+  display: flex;
+  justify-content: space-between;
+}
+
+.boardview__writer {
+  display: flex;
+  gap: 10px;
+}
+
+.boardview__text {
+  margin: 16px 0;
+  line-height: 1.6;
+}
+
+.boardview__tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+
+.boardview__comments-title {
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.boardview__comments-count {
+  font-size: 1rem;
+}
+
+.boardview__related-title {
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+.comment__write {
+  display: flex;
+  gap: 10px;
+
+  &-btn {
+    width: 100px;
+    padding: 0 20px;
+    font-size: 14px !important;
+  }
+}
+
+@keyframes heartFloat {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translateY(-20px) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-40px) scale(0.8);
+  }
+}
+</style>
