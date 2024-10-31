@@ -20,7 +20,7 @@ const linkComponent = computed(() => (props.to ? RouterLink : "div"));
         <h1>{{ props.news.title }}</h1>
       </div>
       <div class="bottom">
-        <StateButton type="tag" size="sm">{{ props.news.author }}</StateButton>
+        <StateButton type="tag" size="sm">{{ props.news.writer }}</StateButton>
         {{ props.news.write_date }}
       </div>
     </ContentBox>

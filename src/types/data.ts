@@ -16,7 +16,7 @@ export interface INews {
 export interface IArticle {
   id: number;
   title: string;
-  author: string;
+  writer: string;
   write_date: string;
 }
 
@@ -41,6 +41,6 @@ export interface IBoard {
 export interface IComments {
   id: number;
   writer_name: string;
-  write_date: string;
+  write_date: Date;
   content: string;
 }

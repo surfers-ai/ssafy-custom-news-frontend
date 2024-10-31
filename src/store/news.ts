@@ -17,15 +17,15 @@ export const useNewsStore = defineStore("news", {
         return;
       }
 
-      try {
-        const category = tabs.find((tab) => tab.id === tabId)?.value || "";
-        const response = await getNewsList(category);
+      // try {
+      //   const category = tabs.find((tab) => tab.id === tabId)?.value || "";
+      //   const response = await getNewsList(category);
 
-        this.newsList = response.data.data;
-        this.cachedNews[tabId] = response.data.data;
-      } catch (error) {
-        console.error("Error fetching news:", error);
-      }
+      //   this.newsList = response.data.data;
+      //   this.cachedNews[tabId] = response.data.data;
+      // } catch (error) {
+      //   console.error("Error fetching news:", error);
+      // }
     },
 
     setActiveTab(tabId: number) {

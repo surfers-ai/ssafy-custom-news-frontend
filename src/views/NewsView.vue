@@ -13,18 +13,18 @@ import { useUserStore } from "@/store/user";
 const newsStore = useNewsStore();
 const userStore = useUserStore();
 const newsList = ref<INews[]>([]);
-const cachedNews = ref<Record<number, INews[]>>({});
+const sortBy = ref<"latest" | "recommend">("latest");
 
-const loadNews = async (tabId: number) => {
-  if (cachedNews.value[tabId]) {
-    newsList.value = cachedNews.value[tabId];
-    return;
-  }
+const currentPage = ref(1);
+const totalPages = ref(1);
+const pageSize = ref(10);
 
+const loadNews = async (tabId: number, page: number = 1) => {
   try {
-    const data = await fetchNews(tabId);
-    newsList.value = data;
-    cachedNews.value[tabId] = data;
+    const data = await fetchNews(tabId, page);
+    newsList.value = data.articles;
+    totalPages.value = data.pagination.total_pages;
+    pageSize.value = data.pagination.limit;
   } catch (error) {
     console.error("Error fetching news:", error);
   }
@@ -32,16 +32,38 @@ const loadNews = async (tabId: number) => {
 
 watch(
   () => newsStore.currentTab,
-  (tabId) => loadNews(tabId),
+  (tabId) => {
+    currentPage.value = 1;
+    loadNews(tabId, currentPage.value);
+  },
   { immediate: true }
 );
 
-async function fetchNews(tabId: number): Promise<INews[]> {
+watch(sortBy, () => {
+  currentPage.value = 1;
+  loadNews(newsStore.currentTab, currentPage.value);
+});
+
+async function fetchNews(
+  tabId: number,
+  page: number
+): Promise<{
+  articles: INews[];
+  pagination: { total_pages: number; limit: number };
+}> {
   const category = tabs.find((tab) => tab.id === tabId)?.value || "";
-  const response = await getNewsList(category);
+  const response = await getNewsList(category, sortBy.value, page);
   return response.data.data;
 }
+
+const goToPage = (page: number) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+    loadNews(newsStore.currentTab, page);
+  }
+};
 </script>
+
 <template>
   <div class="news">
     <div>
@@ -55,19 +77,6 @@ async function fetchNews(tabId: number): Promise<INews[]> {
         보기 쉬운 대시보드를 통해 나의 뉴스 소비 패턴도 확인할 수 있습니다.
       </p>
     </div>
-
-    <ContentBox class="news__tabs">
-      <StateButton
-        v-for="tab in tabs"
-        :key="tab.id"
-        type="state"
-        :is-active="newsStore.currentTab === tab.id"
-        @click="newsStore.setActiveTab(tab.id)"
-      >
-        {{ tab.label }}
-      </StateButton>
-    </ContentBox>
-
     <ContentBox class="news__box">
       <div class="news__box__title-container">
         <h1 class="news__box__title">
@@ -89,6 +98,12 @@ async function fetchNews(tabId: number): Promise<INews[]> {
         >
           로그인하시면 취향에 맞는 맞춤 뉴스를 전달해드려요.
         </RouterLink>
+        <div class="filters__container">
+          <select class="filters" v-model="sortBy">
+            <option value="latest">최신순</option>
+            <option value="recommend">추천순</option>
+          </select>
+        </div>
         <span class="news__box__subtitle-loggedin">
           취향에 맞는 맞춤 뉴스를 골라 전달해드려요.
         </span>
@@ -96,6 +111,22 @@ async function fetchNews(tabId: number): Promise<INews[]> {
 
       <div class="news__box__cards" v-for="news in newsList" :key="news.id">
         <NewsCard :data="news" />
+      </div>
+
+      <div class="pagination">
+        <button
+          @click="goToPage(currentPage - 1)"
+          :disabled="currentPage === 1"
+        >
+          &lt;
+        </button>
+        <span> {{ currentPage }} / {{ totalPages }}</span>
+        <button
+          @click="goToPage(currentPage + 1)"
+          :disabled="currentPage === totalPages"
+        >
+          >
+        </button>
       </div>
     </ContentBox>
   </div>
@@ -152,6 +183,11 @@ async function fetchNews(tabId: number): Promise<INews[]> {
       }
     }
 
+    .filters__container {
+      position: absolute;
+      right: 0;
+    }
+
     &__subtitle {
       position: absolute;
       right: 0;
@@ -178,5 +214,27 @@ async function fetchNews(tabId: number): Promise<INews[]> {
       margin-left: 30px;
     }
   }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.pagination button {
+  font-size: 13px;
+  padding: 4px 8px;
+  border: none;
+  background-color: #0c3057;
+  color: white;
+  border-radius: 100px;
+}
+
+.pagination button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
 }
 </style>

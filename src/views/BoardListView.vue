@@ -7,7 +7,6 @@ import { ref } from "vue";
 import BoardCard from "@/components/BoardCard.vue";
 import type { IBoard } from "@/types/data";
 import { getBoardList } from "@/api/api";
-
 const tabs = [
   { id: 0, value: "전체" },
   { id: 1, value: "자유게시판" },
@@ -18,37 +17,53 @@ const activeTab = ref(tabs[0].id);
 
 function selectTab(id: number) {
   activeTab.value = id;
+  currentPage.value = 1;
+  loadBoards(id, currentPage.value);
 }
 
 const boadList = ref<IBoard[]>([]);
 const Boards = ref<Record<number, IBoard[]>>({});
 
-const loadBoards = async (tabId: number) => {
-  if (Boards.value[tabId]) {
-    boadList.value = Boards.value[tabId];
-    return;
-  }
+const currentPage = ref(1);
+const totalPages = ref(1);
+const pageSize = ref(10);
 
+const loadBoards = async (tabId: number, page: number = 1) => {
   try {
-    const data = await fetchBoard(tabId);
-    boadList.value = data;
-    Boards.value[tabId] = data;
+    const data = await fetchBoard(tabId, page);
+    boadList.value = data.postings;
+    Boards.value[tabId] = data.postings;
+    totalPages.value = data.pagination.total_pages;
+    pageSize.value = data.pagination.limit;
   } catch (error) {
-    console.error("Error fetching news:", error);
+    console.error("Error fetching boards:", error);
   }
 };
 
 watch(
   () => activeTab.value,
-  (tabId) => loadBoards(tabId),
+  (tabId) => loadBoards(tabId, currentPage.value),
   { immediate: true }
 );
 
-async function fetchBoard(tabId: number): Promise<IBoard[]> {
+async function fetchBoard(
+  tabId: number,
+  page: number
+): Promise<{
+  postings: IBoard[];
+  pagination: { total_pages: number; limit: number };
+}> {
   const category = tabs.find((tab) => tab.id === tabId)?.value || "";
-  const response = await getBoardList(category);
+  const response = await getBoardList(category, page);
   return response.data.data;
 }
+
+const goToPage = (page: number) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+    loadBoards(activeTab.value, page);
+  }
+};
 </script>
 
 <template>
@@ -60,10 +75,11 @@ async function fetchBoard(tabId: number): Promise<IBoard[]> {
       취업을 위한 여정을 함께합니다.<br />
       여러분의 취업 준비에 꼭 필요한 모든 정보를 제공합니다!
     </p>
-    <div class="wrtie-btn__container">
+    <div class="write-btn__container">
       <StateButton to="/write" isActive>글쓰기</StateButton>
     </div>
   </div>
+
   <ContentBox>
     <div class="tab-navigation">
       <button
@@ -82,11 +98,25 @@ async function fetchBoard(tabId: number): Promise<IBoard[]> {
     <div v-for="(board, idx) in boadList" :key="idx">
       <BoardCard :data="board" />
     </div>
+
+    <div class="pagination">
+      <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1">
+        이전
+      </button>
+      <span>페이지 {{ currentPage }} / {{ totalPages }}</span>
+      <button
+        @click="goToPage(currentPage + 1)"
+        :disabled="currentPage === totalPages"
+      >
+        다음
+      </button>
+    </div>
   </ContentBox>
 </template>
 
 <style scoped lang="scss">
-.wrtie-btn__container {
+.write-btn__container {
+  width: 100%;
   display: flex;
   justify-content: end;
 }
@@ -95,6 +125,7 @@ async function fetchBoard(tabId: number): Promise<IBoard[]> {
   font-weight: 700;
   padding-bottom: 10px;
   margin-top: 30px;
+  border-bottom: 1px solid #e2e2e2;
 }
 
 .description {
@@ -179,5 +210,27 @@ async function fetchBoard(tabId: number): Promise<IBoard[]> {
       margin-left: 30px;
     }
   }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.pagination button {
+  font-size: 13px;
+  padding: 4px 8px;
+  border: none;
+  background-color: #0c3057;
+  color: white;
+  border-radius: 100px;
+}
+
+.pagination button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
 }
 </style>

@@ -17,7 +17,7 @@ const date = computed(() => formatDate(props.data.write_date));
         props.data.category
       }}</StateButton>
       <span class="subcategory">{{ props.data.writer }}</span>
-      <span class="date">· {{ date }}</span>
+      <span class="date">{{ date }}</span>
     </div>
     <RouterLink :to="{ name: 'boardDetail', params: { id: props.data.id } }">
       <h2 class="title">{{ props.data.title }}</h2>

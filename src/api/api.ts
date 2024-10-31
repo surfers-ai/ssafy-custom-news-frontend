@@ -1,8 +1,14 @@
 import type { IBoardReq, IChatReq } from "@/types/api";
 import http from "./core";
 
-export function getNewsList(category: string) {
-  const url = category ? `/news-list?category=${category}` : `/news-list/`;
+export function getNewsList(
+  category: string,
+  sort: "latest" | "recommend",
+  page: number
+) {
+  const url = category
+    ? `/news-list?category=${category}?sort_by=${sort}&page=${page}`
+    : `/news-list/?sort_by=${sort}&page=${page}`;
   return http.get(url);
 }
 
@@ -29,8 +35,10 @@ export function deleteLike(id: string) {
   return http.delete("/news/like/", { data: { article_id: id } });
 }
 
-export function getBoardList(category: string) {
-  const url = category ? `/board-list?category=${category}` : `/board-list/`;
+export function getBoardList(category: string, page: number) {
+  const url = category
+    ? `/board-list?category=${category}&${page}`
+    : `/board-list/?${page}`;
   return http.get(url);
 }
 
@@ -42,6 +50,6 @@ export function postBoard(data: IBoardReq) {
   return http.post("/write-posting/", data);
 }
 
-export function postComment( id: string, comment: string ) {
-  return http.post(`/write-comment/${id}`, {content : comment});
+export function postComment(id: string, comment: string) {
+  return http.post(`/write-comment/${id}/`, { content: comment });
 }

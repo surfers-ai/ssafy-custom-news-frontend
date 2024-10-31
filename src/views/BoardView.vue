@@ -23,22 +23,7 @@ const relatedNews = ref(dummyNewsData);
 
 const newComment = ref("");
 
-const comments = ref<IComments[]>([
-  {
-    id: 1,
-    writer_name: "dev_kim",
-    write_date: "2024.10.24 15:10",
-    content:
-      "AI는 결국 도구일 뿐이라고 생각합니다. 기본기가 더 중요해질 것 같네요.",
-  },
-  {
-    id: 2,
-    writer_name: "code_lee",
-    write_date: "2024.10.24 15:12",
-    content:
-      "기본기를 바탕으로 AI를 활용하는 방법을 배우는 것이 중요하다고 봅니다.",
-  },
-]);
+const comments = ref<IComments[]>([]);
 
 const userStore = useUserStore();
 
@@ -48,8 +33,9 @@ async function addComment() {
       await postComment(newsId.value, newComment.value);
 
       comments.value.push({
+        id: comments.value.length + 1,
         writer_name: userStore.username,
-        write_date: new Date().toISOString().split("T")[0],
+        write_date: new Date(),
         content: newComment.value,
       });
 
@@ -117,7 +103,7 @@ watch(
               <h2 class="boardview__title">{{ news?.title }}</h2>
               <div class="boardview__subtitle">
                 <div class="boardview__writer">
-                  <span>{{ news.writer }}</span>
+                  <span>{{ news.writer_name }}</span>
                   <span> 🕒 {{ formatDate(news.write_date) }}</span>
                 </div>
                 <!-- <span>조회수 {{ news?.article_interaction.read }}</span> -->
