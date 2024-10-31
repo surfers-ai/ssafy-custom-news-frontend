@@ -37,8 +37,8 @@ export function deleteLike(id: string) {
 
 export function getBoardList(category: string, page: number) {
   const url = category
-    ? `/board-list?category=${category}&${page}`
-    : `/board-list/?${page}`;
+    ? `/board-list?category=${category}&page=${page}`
+    : `/board-list/?page=${page}`;
   return http.get(url);
 }
 

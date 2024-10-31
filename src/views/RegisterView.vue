@@ -22,7 +22,6 @@ const pwdError = ref("");
 const handlePwdInput = () => {
   pwdError.value = validatePwd(password.value);
 };
-
 const submitForm = async () => {
   const req: IRegisterReq = {
     username: name.value,
@@ -39,11 +38,22 @@ const submitForm = async () => {
       alert("회원가입이 완료되었습니다!");
       router.push("/login");
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error("Registration failed:", error);
-    alert(
-      "\n회원가입에 실패했습니다.\n단순한 패턴 및 사용자 정보와 유사한 비밀번호는 사용할 수 없습니다."
-    );
+    if (error.response && error.response.data) {
+      const errors = error.response.data;
+
+      const msg = Object.entries(errors)
+        .map(([field, messages]) => {
+          const messageText = (messages as string[]).join(", ");
+          return `${field}: ${messageText}`;
+        })
+        .join("\n");
+
+      alert(`회원가입에 실패했습니다.\n${msg}`);
+    } else {
+      alert("회원가입 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    }
   }
 };
 </script>

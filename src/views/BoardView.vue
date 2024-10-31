@@ -103,7 +103,7 @@ watch(
               <h2 class="boardview__title">{{ news?.title }}</h2>
               <div class="boardview__subtitle">
                 <div class="boardview__writer">
-                  <span>{{ news.writer_name }}</span>
+                  <span>{{ news.writer }}</span>
                   <span> 🕒 {{ formatDate(news.write_date) }}</span>
                 </div>
                 <!-- <span>조회수 {{ news?.article_interaction.read }}</span> -->
@@ -149,7 +149,7 @@ watch(
       </div>
 
       <ContentBox class="boardview__sidebar">
-        <h1 class="boardview__related-title">📰 관련 기사</h1>
+        <h1 class="boardview__related-title">📰 추천 기사</h1>
         <div v-for="(news, index) in relatedNews" :key="index">
           <NewsPreview2 :to="`/news/${news.id}`" :news="news" />
         </div>

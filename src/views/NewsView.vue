@@ -93,10 +93,10 @@ const goToPage = (page: number) => {
         </h1>
         <RouterLink
           to="/login"
-          class="news__box__subtitle"
+          class="news__box__noti"
           v-if="!userStore.isLoggedIn"
         >
-          로그인하시면 취향에 맞는 맞춤 뉴스를 전달해드려요.
+          ❗️로그인하시면 취향에 맞는 맞춤 뉴스를 전달해드려요.
         </RouterLink>
         <div class="filters__container">
           <select class="filters" v-model="sortBy">
@@ -104,7 +104,8 @@ const goToPage = (page: number) => {
             <option value="recommend">추천순</option>
           </select>
         </div>
-        <span class="news__box__subtitle-loggedin">
+        <!-- 숨겨진 문구 -->
+        <span v-if="userStore.isLoggedIn" class="news__box__subtitle-loggedin">
           취향에 맞는 맞춤 뉴스를 골라 전달해드려요.
         </span>
       </div>
@@ -131,7 +132,6 @@ const goToPage = (page: number) => {
     </ContentBox>
   </div>
 </template>
-
 <style scoped lang="scss">
 .news {
   display: flex;
@@ -154,20 +154,21 @@ const goToPage = (page: number) => {
     margin: 15px 0 30px;
   }
 
-  &__tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    padding: 12px 30px !important;
-  }
-
   &__box {
     padding: 30px !important;
+
+    &__noti {
+      color: #666666;
+      font-size: 12px;
+      padding: 5px 10px;
+    }
 
     &__title-container {
       position: relative;
       display: flex;
+      align-items: center;
     }
+
     &__title {
       font-weight: 700;
       font-size: 21px;
@@ -183,18 +184,6 @@ const goToPage = (page: number) => {
       }
     }
 
-    .filters__container {
-      position: absolute;
-      right: 0;
-    }
-
-    &__subtitle {
-      position: absolute;
-      right: 0;
-      color: #575757;
-      text-decoration: underline;
-    }
-
     &__subtitle-loggedin {
       font-weight: 400;
       padding: 10px 0 0 10px;
@@ -205,8 +194,13 @@ const goToPage = (page: number) => {
       text-decoration: underline;
     }
 
-    &__title:hover + .news__box__subtitle-loggedin {
+    &__title-container:hover .news__box__subtitle-loggedin {
       opacity: 1;
+    }
+
+    .filters__container {
+      position: absolute;
+      right: 0;
     }
 
     &__cards {

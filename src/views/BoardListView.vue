@@ -2,7 +2,6 @@
 import { watch } from "vue";
 import ContentBox from "@/common/ContentBox.vue";
 import StateButton from "@/common/StateButton.vue";
-import TheInput from "@/common/TheInput.vue";
 import { ref } from "vue";
 import BoardCard from "@/components/BoardCard.vue";
 import type { IBoard } from "@/types/data";
@@ -65,7 +64,6 @@ const goToPage = (page: number) => {
   }
 };
 </script>
-
 <template>
   <div>
     <h1 class="board__title">커뮤니티</h1>
@@ -95,11 +93,15 @@ const goToPage = (page: number) => {
       </button>
     </div>
 
-    <div v-for="(board, idx) in boadList" :key="idx">
-      <BoardCard :data="board" />
+    <div v-if="boadList.length > 0">
+      <div v-for="(board, idx) in boadList" :key="idx">
+        <BoardCard :data="board" />
+      </div>
     </div>
 
-    <div class="pagination">
+    <div v-else class="no-data">데이터가 없습니다.</div>
+
+    <div class="pagination" v-if="totalPages > 1">
       <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1">
         이전
       </button>

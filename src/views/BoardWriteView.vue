@@ -10,7 +10,7 @@ const title = ref("");
 const category = ref("자유게시판");
 const content = ref("");
 const tags = ref<string[]>([]);
-
+const isDisabled = ref(false);
 const categories = ["자유게시판", "취업정보", "자소서공유"];
 
 const newTag = ref("");
@@ -25,6 +25,7 @@ function removeTag(tag: string) {
   tags.value = tags.value.filter((t) => t !== tag);
 }
 async function handlePostBoard() {
+  isDisabled.value = true;
   const postData = {
     title: title.value,
     category: category.value,
@@ -38,6 +39,7 @@ async function handlePostBoard() {
       router.push("/board");
     }
   } catch (error) {
+    isDisabled.value = false;
     console.error("Error posting data:", error);
     alert("다시 시도해주세요.");
   }
@@ -51,6 +53,7 @@ async function handlePostBoard() {
         @click="handlePostBoard"
         isActive
         class="submit-btn"
+        :disabled="isDisabled"
       >
         작성 완료
       </StateButton>
@@ -114,6 +117,10 @@ async function handlePostBoard() {
 .post-form {
   max-width: 900px;
   margin: 0 auto;
+  display: flex;
+  align-items: center; 
+  justify-content: center; 
+  flex-direction: column;
 
   .title-input {
     border-color: #ccc;
@@ -178,6 +185,7 @@ async function handlePostBoard() {
     border: 1px solid #ccc;
   }
   .submit-btn-container {
+    width: 100%;
     display: flex;
     justify-content: flex-end;
     margin-bottom: 2px;
