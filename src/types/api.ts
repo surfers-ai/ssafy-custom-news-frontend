@@ -1,4 +1,4 @@
-import type { IArticle } from "./data";
+import type { IArticle, IComment } from "./data";
 
 export interface IChatReq {
   article_id: string;
@@ -14,7 +14,9 @@ export interface IBoardResponse {
   content: string;
   keywords: string;
   related_article: IArticle[];
-  comments: { comments: string[] };
+  posting_comments: {
+    comments: IComments[];
+  };
 }
 
 export interface IBoardReq {

@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { onMounted, watch } from "vue";
+import { watch } from "vue";
 import ContentBox from "@/common/ContentBox.vue";
-import { useNewsStore } from "@/store/news";
 import StateButton from "@/common/StateButton.vue";
 import TheInput from "@/common/TheInput.vue";
-import { dummyNewsData } from "@/assets/data/dummy";
 import { ref } from "vue";
 import BoardCard from "@/components/BoardCard.vue";
 import type { IBoard } from "@/types/data";
@@ -12,10 +10,9 @@ import { getBoardList } from "@/api/api";
 
 const tabs = [
   { id: 0, value: "전체" },
-  { id: 1, value: "토론" },
-  { id: 2, value: "리뷰" },
-  { id: 3, value: "질문" },
-  { id: 4, value: "정보공유" },
+  { id: 1, value: "자유게시판" },
+  { id: 2, value: "취업정보" },
+  { id: 3, value: "자소서공유" },
 ];
 const activeTab = ref(tabs[0].id);
 

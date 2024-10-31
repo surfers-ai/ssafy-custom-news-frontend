@@ -37,3 +37,10 @@ export interface IBoard {
   content: string;
   keywords: string;
 }
+
+export interface IComments {
+  id: number;
+  writer_name: string;
+  write_date: string;
+  content: string;
+}

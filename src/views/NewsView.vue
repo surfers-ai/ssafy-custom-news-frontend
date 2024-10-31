@@ -8,8 +8,10 @@ import { tabs } from "@/assets/data/tabs";
 import { getNewsList } from "@/api/api";
 import type { INews } from "@/types/data";
 import { useNewsStore } from "@/store/news";
+import { useUserStore } from "@/store/user";
 
 const newsStore = useNewsStore();
+const userStore = useUserStore();
 const newsList = ref<INews[]>([]);
 const cachedNews = ref<Record<number, INews[]>>({});
 
@@ -56,7 +58,10 @@ async function fetchNews(tabId: number): Promise<INews[]> {
     </ContentBox>
 
     <ContentBox class="news__box">
-      <h1 class="news__box__title">🤖 AI 맞춤 추천 뉴스</h1>
+      <h1 class="news__box__title">
+        <span v-if="userStore.isLoggedin">{{ userStore.username }}을 위한</span
+        >🤖 AI 맞춤 추천 뉴스
+      </h1>
       <div class="news__box__cards" v-for="news in newsList" :key="news.id">
         <NewsCard :data="news" />
       </div>
