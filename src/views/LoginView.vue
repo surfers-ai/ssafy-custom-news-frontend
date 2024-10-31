@@ -31,7 +31,7 @@ const submitForm = async () => {
     const response = await loginApi(req);
     if (response.status === 200) {
       userStore.setToken(response.data.access, response.data.refresh);
-      userStore.username = response.data.username;
+      userStore.username = response.data.user.username;
       router.push("/news");
     }
   } catch {

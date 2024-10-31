@@ -52,10 +52,18 @@ async function fetchBoard(tabId: number): Promise<IBoard[]> {
 </script>
 
 <template>
-  <ContentBox class="header">
-    <h1>커뮤니티</h1>
-    <StateButton to="/write" isActive>글쓰기</StateButton>
-  </ContentBox>
+  <div>
+    <h1 class="board__title">커뮤니티</h1>
+    <p class="description">
+      취업에 필요한 다양한 정보를 한눈에 확인하고, 최신 취업 트렌드와 꿀팁을
+      놓치지 마세요! <br />각 분야의 유익한 정보와 기사 추천을 통해 성공적인
+      취업을 위한 여정을 함께합니다.<br />
+      여러분의 취업 준비에 꼭 필요한 모든 정보를 제공합니다!
+    </p>
+    <div class="wrtie-btn__container">
+      <StateButton to="/write" isActive>글쓰기</StateButton>
+    </div>
+  </div>
   <ContentBox>
     <div class="tab-navigation">
       <button
@@ -77,7 +85,26 @@ async function fetchBoard(tabId: number): Promise<IBoard[]> {
   </ContentBox>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
+.wrtie-btn__container {
+  display: flex;
+  justify-content: end;
+}
+.board__title {
+  font-size: 20px;
+  font-weight: 700;
+  padding-bottom: 10px;
+  margin-top: 30px;
+}
+
+.description {
+  font-size: 16px;
+  font-weight: 400;
+  color: #575757;
+  line-height: normal;
+  margin: 15px 0 30px;
+}
+
 .header {
   border: none !important;
   padding: 10px 20px !important;

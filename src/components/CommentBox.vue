@@ -1,19 +1,22 @@
 <script setup lang="ts">
+import { useDate } from "@/composables/useDate";
 import { defineProps } from "vue";
 
 interface CommentProps {
-  author: string;
-  date: string;
+  writer_name: string;
+  write_date: Date;
   content: string;
 }
 const props = defineProps<CommentProps>();
+
+const { formatDate } = useDate();
 </script>
 
 <template>
   <article class="comment">
     <div class="comment__header">
-      <span class="comment__author">{{ props.author }}</span>
-      <span class="comment__date">{{ props.date }}</span>
+      <span class="comment__author">{{ props.writer_name }}</span>
+      <span class="comment__date">{{ formatDate(props.write_date) }}</span>
     </div>
     <p class="comment__content">{{ props.content }}</p>
   </article>

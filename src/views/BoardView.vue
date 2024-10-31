@@ -12,6 +12,7 @@ import { dummyNewsData } from "@/assets/data/dummy";
 import CommentBox from "@/components/CommentBox.vue";
 import TheInput from "@/common/TheInput.vue";
 import { useUserStore } from "@/store/user";
+import type { IComments } from "@/types/data";
 
 const news = ref();
 
@@ -22,16 +23,18 @@ const relatedNews = ref(dummyNewsData);
 
 const newComment = ref("");
 
-const comments = ref([
+const comments = ref<IComments[]>([
   {
-    author: "dev_kim",
-    date: "2024.10.24 15:10",
+    id: 1,
+    writer_name: "dev_kim",
+    write_date: "2024.10.24 15:10",
     content:
       "AI는 결국 도구일 뿐이라고 생각합니다. 기본기가 더 중요해질 것 같네요.",
   },
   {
-    author: "code_lee",
-    date: "2024.10.24 15:12",
+    id: 2,
+    writer_name: "code_lee",
+    write_date: "2024.10.24 15:12",
     content:
       "기본기를 바탕으로 AI를 활용하는 방법을 배우는 것이 중요하다고 봅니다.",
   },
@@ -45,8 +48,8 @@ async function addComment() {
       await postComment(newsId.value, newComment.value);
 
       comments.value.push({
-        author: userStore.username,
-        date: new Date().toISOString().split("T")[0],
+        writer_name: userStore.username,
+        write_date: new Date().toISOString().split("T")[0],
         content: newComment.value,
       });
 
@@ -68,8 +71,8 @@ async function fetchBoard() {
 
   try {
     const response = await getBoard(newsId.value);
-    console.log(response);
     const fetchedBoard = response.data.data;
+    comments.value = fetchedBoard.posting_comments.comments;
     news.value = fetchedBoard;
 
     relatedNews.value = fetchedBoard.related_articles.articles;
@@ -140,8 +143,8 @@ watch(
           </h1>
           <div v-for="(comment, index) in comments" :key="index">
             <CommentBox
-              :author="comment.author"
-              :date="comment.date"
+              :writer_name="comment.writer_name"
+              :write_date="comment.write_date"
               :content="comment.content"
             />
           </div>

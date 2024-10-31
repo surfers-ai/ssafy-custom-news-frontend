@@ -68,8 +68,7 @@ async function fetchNews() {
 async function fetchLike() {
   try {
     const response = await getLikeStatus(newsId.value);
-    console.log(response.data.data);
-    if (response.data.is_liked) liked.value = true;
+    liked.value = response.data.is_liked ? true : false;
   } catch (error) {
     console.error("Error fetching news:", error);
   }

@@ -4,13 +4,14 @@ import ContentBox from "@/common/ContentBox.vue";
 import TheInput from "@/common/TheInput.vue";
 import StateButton from "@/common/StateButton.vue";
 import { postBoard } from "@/api/api";
+import router from "@/router";
 
 const title = ref("");
-const category = ref("기술");
+const category = ref("자유게시판");
 const content = ref("");
 const tags = ref<string[]>([]);
 
-const categories = ["토론", "자유", "질문", "정보"];
+const categories = ["자유게시판", "취업정보", "자소서공유"];
 
 const newTag = ref("");
 function addTag() {
@@ -32,9 +33,13 @@ async function handlePostBoard() {
   };
   try {
     const response = await postBoard(postData);
-    console.log("Post successful:", response);
+    if (response.status === 200) {
+      alert("게시글이 등록되었어요 !");
+      router.push("/board");
+    }
   } catch (error) {
     console.error("Error posting data:", error);
+    alert("다시 시도해주세요.");
   }
 }
 </script>

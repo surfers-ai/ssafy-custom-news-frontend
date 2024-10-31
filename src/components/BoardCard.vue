@@ -47,7 +47,6 @@ const date = computed(() => formatDate(props.data.write_date));
   width: 80%;
   padding: 20px;
   margin-bottom: 10px;
-  border-bottom: 1px solid #e7e6e6;
 
   &__header {
     display: flex;
