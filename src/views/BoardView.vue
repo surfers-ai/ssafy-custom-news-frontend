@@ -17,30 +17,20 @@ const tabs = [
 
 const activeTab = ref(tabs[0].id);
 const boadList = ref<IBoard[]>([]);
-const Boards = ref<Record<number, IBoard[]>>({});
 const currentPage = ref(1);
 const totalPages = ref(1);
 
-function selectTab(id: number) {
-  activeTab.value = id;
-  currentPage.value = 1;
-  loadBoards(id, currentPage.value);
-}
-
-const loadBoards = async (tabId: number, page: number = 1) => {
-  try {
-    const data = await fetchBoard(tabId, page);
-    boadList.value = data.postings;
-    Boards.value[tabId] = data.postings;
-    totalPages.value = data.pagination.total_pages;
-  } catch (error) {
-    console.error("Error fetching boards:", error);
-  }
-};
-
 watch(
   [() => activeTab.value, () => currentPage.value],
-  ([tabId, page]) => loadBoards(tabId, page),
+  async ([tabId, page]) => {
+    try {
+      const data = await fetchBoard(tabId, page);
+      boadList.value = data.postings;
+      totalPages.value = data.pagination.total_pages;
+    } catch (error) {
+      console.error("Error fetching boards:", error);
+    }
+  },
   { immediate: true }
 );
 
@@ -76,7 +66,7 @@ async function fetchBoard(
         v-for="tab in tabs"
         :key="tab.id"
         :class="['tabs__item', { 'tabs__item-active': activeTab === tab.id }]"
-        @click="selectTab(tab.id)"
+        @click="activeTab = tab.id"
       >
         {{ tab.value }}
       </button>

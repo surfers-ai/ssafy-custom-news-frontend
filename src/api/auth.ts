@@ -8,7 +8,3 @@ export function loginApi(req: ILoginReq) {
 export function registerApi(req: IRegisterReq) {
   return http.post("/auth/registration/", req);
 }
-
-export function refreshApi(refreshToken: string | null) {
-  return http.post("/api/refresh/", { refreshToken });
-}

@@ -16,20 +16,6 @@ const activeTab = ref(tabs[0].id);
 const currentPage = ref(1);
 const totalPages = ref(1);
 
-const loadNews = async (
-  tabId: number,
-  page: number = 1,
-  sortBy: "latest" | "recommend"
-) => {
-  try {
-    const data = await fetchNews(tabId, page, sortBy);
-    newsList.value = data.articles;
-    totalPages.value = data.pagination.total_pages;
-  } catch (error) {
-    console.error("Error fetching news:", error);
-  }
-};
-
 async function fetchNews(
   tabId: number,
   page: number,
@@ -45,12 +31,16 @@ async function fetchNews(
 
 watch(
   [() => activeTab.value, () => sortBy.value, () => currentPage.value],
-  ([tabId, sortOption, page], [oldTabId, oldSortOption]) => {
-    if (tabId !== oldTabId || sortOption !== oldSortOption) {
-      currentPage.value = 1;
-      loadNews(tabId, 1, sortOption);
-    } else {
-      loadNews(tabId, page, sortOption);
+  async ([tabId, sortOption], [oldTabId, oldSortOption]) => {
+    try {
+      if (tabId !== oldTabId || sortOption !== oldSortOption) {
+        currentPage.value = 1;
+      }
+      const data = await fetchNews(tabId, currentPage.value, sortOption);
+      newsList.value = data.articles;
+      totalPages.value = data.pagination.total_pages;
+    } catch (error) {
+      console.error("Error fetching news:", error);
     }
   },
   { immediate: true }
@@ -123,6 +113,7 @@ watch(
     </ContentBox>
   </div>
 </template>
+
 <style scoped lang="scss">
 .news {
   display: flex;

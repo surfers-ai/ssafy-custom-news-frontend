@@ -16,18 +16,13 @@ const date = computed(() => formatDate(props.data.write_date));
       <StateButton type="state" size="sm" disabled>{{
         props.data.category
       }}</StateButton>
-      <span class="subcategory">{{ props.data.writer }}</span>
-      <span class="date">{{ date }}</span>
+      <span class="card__header-item">{{ props.data.writer }}</span>
+      <span class="card__header-item">{{ date }}</span>
     </div>
     <RouterLink :to="{ name: 'boardDetail', params: { id: props.data.id } }">
       <h2 class="title">{{ props.data.title }}</h2>
       <p class="description">{{ props.data.content }}</p>
     </RouterLink>
-    <div class="stats">
-      <!-- <span>👍 {{ props.data.article_interaction.likes }}</span>
-      <span>💬 {{ props.data.article_interaction.read }}</span>
-      <span>👀 {{ props.data.article_interaction.read }}</span> -->
-    </div>
     <div class="tags">
       <StateButton
         v-for="(tag, index) in props.data.keywords"
@@ -54,57 +49,39 @@ const date = computed(() => formatDate(props.data.write_date));
     gap: 8px;
     font-size: 0.9rem;
     color: #888;
+
+    &-item {
+      font-weight: normal;
+    }
   }
-}
 
-.subcategory,
-.date {
-  font-weight: normal;
-}
+  .title {
+    margin: 12px 0;
+    font-size: 22px;
+    font-weight: bold;
+    color: #1c1c1e;
+  }
 
-.title {
-  margin: 12px 0;
-  font-size: 22px;
-  font-weight: bold;
-  color: #1c1c1e;
-}
+  .description {
+    font-size: 1rem;
+    width: 90%;
+    color: var(--c-gray-600);
+    margin: 15px 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+  }
 
-.description {
-  font-size: 1rem;
-  width: 90%;
-  color: var(--c-gray-600);
-  margin: 15px 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.3;
-}
-
-.stats {
-  display: flex;
-  gap: 15px;
-  font-size: 0.9rem;
-  color: var(--c-gray-500);
-  margin-bottom: 15px;
-  align-items: center;
-}
-
-.tags {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  padding-bottom: 40px;
-  border-bottom: 1px solid #e7e6e6;
-}
-
-.tags .state-button {
-  background-color: #f5f5f7;
-  color: #333;
-  padding: 5px 10px;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  cursor: default;
+  .tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding-bottom: 40px;
+    border-bottom: 1px solid #e7e6e6;
+  }
 }
 </style>

@@ -15,8 +15,10 @@ const { formatDate } = useDate();
 <template>
   <article class="comment">
     <div class="comment__header">
-      <span class="comment__author">{{ props.writer_name }}</span>
-      <span class="comment__date">{{ formatDate(props.write_date) }}</span>
+      <span class="comment__header-author">{{ props.writer_name }}</span>
+      <span class="comment__header-date">{{
+        formatDate(props.write_date)
+      }}</span>
     </div>
     <p class="comment__content">{{ props.content }}</p>
   </article>
@@ -38,17 +40,14 @@ const { formatDate } = useDate();
     font-size: 0.9rem;
     color: #666;
     margin-bottom: 5px;
+    &-author {
+      font-weight: bold;
+    }
+    &-date {
+      color: #999;
+      font-size: 0.8rem;
+    }
   }
-
-  &__author {
-    font-weight: bold;
-  }
-
-  &__date {
-    color: #999;
-    font-size: 0.8rem;
-  }
-
   &__content {
     font-size: 1rem;
     line-height: 1.4;

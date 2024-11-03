@@ -45,30 +45,29 @@ const refreshPage = (event: MouseEvent) => {
 .header__container {
   background-color: white;
   border-bottom: 1px solid #d4d4d4;
-}
+  header {
+    max-width: 1280px;
+    margin: 0 auto;
+    color: black;
+    height: 80px;
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
+    padding: 0 15px;
+  }
 
-header {
-  max-width: 1280px;
-  margin: 0 auto;
-  color: black;
-  height: 80px;
-  justify-content: space-between;
-  align-items: center;
-  display: flex;
-  padding: 0 15px;
-}
+  .logo {
+    font-size: x-large;
+    font-weight: 800;
+  }
 
-.logo {
-  font-size: x-large;
-  font-weight: 800;
-}
+  .menus {
+    display: flex;
+    gap: 23px;
+  }
 
-.menus {
-  display: flex;
-  gap: 23px;
-}
-
-a.router-link-active {
-  font-weight: bold;
+  a.router-link-active {
+    font-weight: bold;
+  }
 }
 </style>
