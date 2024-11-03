@@ -1,272 +1,143 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { watch } from "vue";
 import ContentBox from "@/common/ContentBox.vue";
 import StateButton from "@/common/StateButton.vue";
-import { useDate } from "@/composables/useDate";
-import router from "@/router";
-import LeftArrow from "@/components/icon/LeftArrow.svg";
-import { getBoard, postComment } from "@/api/api";
-import NewsPreview2 from "@/components/NewsPreview2.vue";
-import { dummyNewsData } from "@/assets/data/dummy";
-import CommentBox from "@/components/CommentBox.vue";
-import TheInput from "@/common/TheInput.vue";
-import { useUserStore } from "@/store/user";
-import type { IComments } from "@/types/data";
+import { ref } from "vue";
+import BoardCard from "@/components/BoardCard.vue";
+import type { IBoard } from "@/types/data";
+import { getBoardList } from "@/api/api";
+import PaginationButton from "@/common/PaginationButton.vue";
 
-const news = ref();
+const tabs = [
+  { id: 0, value: "전체" },
+  { id: 1, value: "자유게시판" },
+  { id: 2, value: "취업정보" },
+  { id: 3, value: "자소서공유" },
+];
 
-const route = useRoute();
-const newsId = ref<string>("0");
+const activeTab = ref(tabs[0].id);
+const boadList = ref<IBoard[]>([]);
+const Boards = ref<Record<number, IBoard[]>>({});
+const currentPage = ref(1);
+const totalPages = ref(1);
 
-const relatedNews = ref(dummyNewsData);
-
-const newComment = ref("");
-
-const comments = ref<IComments[]>([]);
-
-const userStore = useUserStore();
-
-async function addComment() {
-  if (newComment.value.trim()) {
-    try {
-      await postComment(newsId.value, newComment.value);
-
-      comments.value.push({
-        id: comments.value.length + 1,
-        writer_name: userStore.username,
-        write_date: new Date(),
-        content: newComment.value,
-      });
-
-      newComment.value = "";
-    } catch {
-      alert("댓글 추가에 실패했습니다. 다시 시도해주세요.");
-    }
-  }
+function selectTab(id: number) {
+  activeTab.value = id;
+  currentPage.value = 1;
+  loadBoards(id, currentPage.value);
 }
 
-const { formatDate } = useDate();
-
-const goBack = () => {
-  router.push("/board");
+const loadBoards = async (tabId: number, page: number = 1) => {
+  try {
+    const data = await fetchBoard(tabId, page);
+    boadList.value = data.postings;
+    Boards.value[tabId] = data.postings;
+    totalPages.value = data.pagination.total_pages;
+  } catch (error) {
+    console.error("Error fetching boards:", error);
+  }
 };
 
-async function fetchBoard() {
-  newsId.value = route.params.id as string;
-
-  try {
-    const response = await getBoard(newsId.value);
-    const fetchedBoard = response.data.data;
-    comments.value = fetchedBoard.posting_comments.comments;
-    news.value = fetchedBoard;
-
-    relatedNews.value = fetchedBoard.related_articles.articles;
-  } catch (error) {
-    console.error("Error fetching news:", error);
-  }
-}
-
-// async function fetchLike() {
-//   try {
-//     const response = await getLikeStatus(newsId.value);
-//     const fetchedNews = response.data.data;
-//     news.value = fetchedNews;
-//   } catch (error) {
-//     console.error("Error fetching news:", error);
-//   }
-// }
-
-onMounted(() => {
-  fetchBoard();
-});
-
 watch(
-  () => route.params.id,
-  (newId) => {
-    newsId.value = newId as string;
-    fetchBoard();
-  }
+  [() => activeTab.value, () => currentPage.value],
+  ([tabId, page]) => loadBoards(tabId, page),
+  { immediate: true }
 );
+
+async function fetchBoard(
+  tabId: number,
+  page: number
+): Promise<{
+  postings: IBoard[];
+  pagination: { total_pages: number };
+}> {
+  const category = tabs.find((tab) => tab.id === tabId)?.value || "";
+  const response = await getBoardList(category, page);
+  return response.data.data;
+}
 </script>
 <template>
-  <button @click="goBack" class="boardview__back-btn"><LeftArrow /></button>
-  <div v-if="news" class="boardview">
-    <div class="boardview__content">
-      <div class="boardview__main">
-        <ContentBox>
-          <div class="boardview__article">
-            <div class="boardview__header">
-              <StateButton type="state" size="sm" isActive disabled>{{
-                news?.category
-              }}</StateButton>
-              <h2 class="boardview__title">{{ news?.title }}</h2>
-              <div class="boardview__subtitle">
-                <div class="boardview__writer">
-                  <span>{{ news.writer }}</span>
-                  <span> 🕒 {{ formatDate(news.write_date) }}</span>
-                </div>
-                <!-- <span>조회수 {{ news?.article_interaction.read }}</span> -->
-              </div>
-            </div>
-            <p class="boardview__text">{{ news?.content }}</p>
-            <div class="boardview__tags">
-              <StateButton
-                v-for="(tag, index) in news.keywords"
-                :key="index"
-                type="tag"
-                size="sm"
-              >
-                #{{ tag }}
-              </StateButton>
-            </div>
-          </div>
-        </ContentBox>
-        <ContentBox>
-          <h1 class="boardview__comments-title">
-            댓글
-            <span class="boardview__comments-count">{{ comments.length }}</span>
-          </h1>
-          <div v-for="(comment, index) in comments" :key="index">
-            <CommentBox
-              :writer_name="comment.writer_name"
-              :write_date="comment.write_date"
-              :content="comment.content"
-            />
-          </div>
-
-          <div class="comment__write">
-            <TheInput
-              v-model="newComment"
-              placeholder="댓글을 입력하세요..."
-              @keyup.enter="addComment"
-            />
-            <StateButton class="comment__write-btn" isActive @click="addComment"
-              >작성</StateButton
-            >
-          </div>
-        </ContentBox>
-      </div>
-
-      <ContentBox class="boardview__sidebar">
-        <h1 class="boardview__related-title">📰 추천 기사</h1>
-        <div v-for="(news, index) in relatedNews" :key="index">
-          <NewsPreview2 :to="`/news/${news.id}`" :news="news" />
-        </div>
-      </ContentBox>
+  <div>
+    <h1 class="title">커뮤니티</h1>
+    <p class="description">
+      취업에 필요한 다양한 정보를 한눈에 확인하고, 최신 취업 트렌드와 꿀팁을
+      놓치지 마세요! <br />각 분야의 유익한 정보와 기사 추천을 통해 성공적인
+      취업을 위한 여정을 함께합니다.<br />
+      여러분의 취업 준비에 꼭 필요한 모든 정보를 제공합니다!
+    </p>
+    <div class="write-btn__container">
+      <StateButton to="/write" isActive>글쓰기</StateButton>
     </div>
   </div>
+
+  <ContentBox>
+    <div class="tabs">
+      <button
+        v-for="tab in tabs"
+        :key="tab.id"
+        :class="['tabs__item', { 'tabs__item-active': activeTab === tab.id }]"
+        @click="selectTab(tab.id)"
+      >
+        {{ tab.value }}
+      </button>
+    </div>
+
+    <div v-if="boadList.length > 0">
+      <div v-for="(board, idx) in boadList" :key="idx">
+        <BoardCard :data="board" />
+      </div>
+    </div>
+
+    <div v-else class="no-data">데이터가 없습니다.</div>
+
+    <PaginationButton v-model="currentPage" :totalPages="totalPages" />
+  </ContentBox>
 </template>
 
 <style scoped lang="scss">
-.boardview {
-  &__back-btn {
-    margin-bottom: 10px;
-  }
+.write-btn__container {
+  width: 100%;
+  display: flex;
+  justify-content: end;
+}
 
-  &__content {
-    display: flex;
-    gap: 20px;
-  }
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  padding-bottom: 10px;
+  margin-top: 30px;
+  border-bottom: 1px solid #e2e2e2;
+}
 
-  &__main {
-    flex: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
+.description {
+  font-size: 16px;
+  font-weight: 400;
+  color: #575757;
+  line-height: normal;
+  margin: 15px 0 30px;
+}
 
-  &__sidebar {
-    flex: 1;
-    height: fit-content;
-  }
+.tabs {
+  display: flex;
+  gap: 10px;
+  border-bottom: 1px solid #e5e5ea;
+  background-color: #ebebeb;
+  width: fit-content;
+  border-radius: 10px;
 
-  @media (max-width: 768px) {
-    &__content {
-      flex-direction: column;
+  &__item {
+    padding: 6px 12px;
+    color: #666;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+    &-active {
+      margin: 2px;
+      font-weight: 500;
+      color: #000;
+      background-color: #fff;
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
     }
-  }
-}
-
-.boardview__article {
-  font-size: 1rem;
-  padding: 20px;
-}
-
-.boardview__header {
-  color: #888;
-  font-size: 0.9rem;
-  margin-bottom: 10px;
-}
-
-.boardview__title {
-  margin: 12px 0;
-  font-size: 1.6rem;
-  font-weight: bold;
-  color: #1c1c1e;
-}
-
-.boardview__subtitle {
-  display: flex;
-  justify-content: space-between;
-}
-
-.boardview__writer {
-  display: flex;
-  gap: 10px;
-}
-
-.boardview__text {
-  margin: 16px 0;
-  line-height: 1.6;
-}
-
-.boardview__tags {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 15px;
-}
-
-.boardview__comments-title {
-  font-weight: bold;
-  font-size: 1.2rem;
-  margin-bottom: 10px;
-}
-
-.boardview__comments-count {
-  font-size: 1rem;
-}
-
-.boardview__related-title {
-  font-weight: bold;
-  font-size: 1.2rem;
-  margin-bottom: 20px;
-}
-
-.comment__write {
-  display: flex;
-  gap: 10px;
-
-  &-btn {
-    width: 100px;
-    padding: 0 20px;
-    font-size: 14px !important;
-  }
-}
-
-@keyframes heartFloat {
-  0% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: translateY(-20px) scale(1.2);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-40px) scale(0.8);
   }
 }
 </style>

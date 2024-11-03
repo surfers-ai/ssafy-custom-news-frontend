@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { withDefaults, useAttrs, defineModel, computed } from "vue";
 
+defineOptions({
+  inheritAttrs: false,
+});
+
 interface InputBoxProps {
   wrapperClass?: string;
   value?: string;
@@ -12,7 +16,7 @@ const props = withDefaults(defineProps<InputBoxProps>(), {
   value: "",
 });
 
-const modelValue = defineModel<string | undefined>("modelValue", {
+const modelValue = defineModel<string | undefined>({
   default: undefined,
 });
 

@@ -7,12 +7,12 @@ export function getNewsList(
   page: number
 ) {
   const url = category
-    ? `/news-list?category=${category}?sort_by=${sort}&page=${page}`
+    ? `/news-list?category=${category}&sort_by=${sort}&page=${page}`
     : `/news-list/?sort_by=${sort}&page=${page}`;
   return http.get(url);
 }
 
-export function getNews(id: number) {
+export function getNews(id: string) {
   return http.get(`/news/${id}/`);
 }
 

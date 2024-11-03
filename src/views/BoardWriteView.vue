@@ -15,8 +15,8 @@ const categories = ["자유게시판", "취업정보", "자소서공유"];
 
 const newTag = ref("");
 function addTag() {
-  if (newTag.value && !tags.value.includes(newTag.value)) {
-    tags.value.push(newTag.value);
+  if (newTag.value && !tags.value.includes(newTag.value.trim())) {
+    tags.value.push(newTag.value.trim());
     newTag.value = "";
   }
 }
@@ -24,27 +24,29 @@ function addTag() {
 function removeTag(tag: string) {
   tags.value = tags.value.filter((t) => t !== tag);
 }
+
 async function handlePostBoard() {
   isDisabled.value = true;
-  const postData = {
-    title: title.value,
-    category: category.value,
-    content: content.value,
-    keywords: tags.value,
-  };
   try {
-    const response = await postBoard(postData);
+    const response = await postBoard({
+      title: title.value,
+      category: category.value,
+      content: content.value,
+      keywords: tags.value,
+    });
     if (response.status === 200) {
-      alert("게시글이 등록되었어요 !");
+      alert("게시글이 등록되었습니다!");
       router.push("/board");
     }
   } catch (error) {
-    isDisabled.value = false;
     console.error("Error posting data:", error);
     alert("다시 시도해주세요.");
+  } finally {
+    isDisabled.value = false;
   }
 }
 </script>
+
 <template>
   <div class="post-form">
     <div class="submit-btn-container">
@@ -58,6 +60,7 @@ async function handlePostBoard() {
         작성 완료
       </StateButton>
     </div>
+
     <ContentBox>
       <div class="post-form__field">
         <label for="title">제목</label>
@@ -113,17 +116,16 @@ async function handlePostBoard() {
   </div>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 .post-form {
   max-width: 900px;
   margin: 0 auto;
   display: flex;
-  align-items: center; 
-  justify-content: center; 
   flex-direction: column;
+  align-items: center;
 
-  .title-input {
-    border-color: #ccc;
+  :deep(.title-input) {
+    border-color: #ccc !important;
   }
 
   &__field {
@@ -137,12 +139,17 @@ async function handlePostBoard() {
     }
   }
 
-  &__select {
+  &__select,
+  &__textarea {
     width: 100%;
     padding: 8px;
-    border-radius: 10px;
+    border-radius: 5px;
     border: 1px solid #ccc;
     font-size: 1rem;
+  }
+
+  &__textarea {
+    height: 250px;
   }
 
   &__tags {
@@ -173,23 +180,15 @@ async function handlePostBoard() {
     cursor: pointer;
     background: none;
     border: none;
-    padding-bottom: 3px;
   }
 
-  &__textarea {
-    width: 100%;
-    height: 250px;
-    padding: 10px;
-    font-size: 1rem;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-  }
   .submit-btn-container {
     width: 100%;
     display: flex;
     justify-content: flex-end;
     margin-bottom: 2px;
   }
+
   .submit-btn {
     padding: 10px 20px;
     font-size: 1rem;

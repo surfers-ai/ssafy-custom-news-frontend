@@ -1,67 +1,60 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
-
 import ContentBox from "@/common/ContentBox.vue";
-import StateButton from "@/common/StateButton.vue";
 import NewsCard from "@/components/NewsCard.vue";
 import { tabs } from "@/assets/data/tabs";
 import { getNewsList } from "@/api/api";
 import type { INews } from "@/types/data";
-import { useNewsStore } from "@/store/news";
 import { useUserStore } from "@/store/user";
+import PaginationButton from "@/common/PaginationButton.vue";
+import StateButton from "@/common/StateButton.vue";
 
-const newsStore = useNewsStore();
 const userStore = useUserStore();
 const newsList = ref<INews[]>([]);
 const sortBy = ref<"latest" | "recommend">("latest");
-
+const activeTab = ref(tabs[0].id);
 const currentPage = ref(1);
 const totalPages = ref(1);
-const pageSize = ref(10);
 
-const loadNews = async (tabId: number, page: number = 1) => {
+const loadNews = async (
+  tabId: number,
+  page: number = 1,
+  sortBy: "latest" | "recommend"
+) => {
   try {
-    const data = await fetchNews(tabId, page);
+    const data = await fetchNews(tabId, page, sortBy);
     newsList.value = data.articles;
     totalPages.value = data.pagination.total_pages;
-    pageSize.value = data.pagination.limit;
   } catch (error) {
     console.error("Error fetching news:", error);
   }
 };
 
-watch(
-  () => newsStore.currentTab,
-  (tabId) => {
-    currentPage.value = 1;
-    loadNews(tabId, currentPage.value);
-  },
-  { immediate: true }
-);
-
-watch(sortBy, () => {
-  currentPage.value = 1;
-  loadNews(newsStore.currentTab, currentPage.value);
-});
-
 async function fetchNews(
   tabId: number,
-  page: number
+  page: number,
+  sortBy: "latest" | "recommend"
 ): Promise<{
   articles: INews[];
   pagination: { total_pages: number; limit: number };
 }> {
   const category = tabs.find((tab) => tab.id === tabId)?.value || "";
-  const response = await getNewsList(category, sortBy.value, page);
+  const response = await getNewsList(category, sortBy, page);
   return response.data.data;
 }
 
-const goToPage = (page: number) => {
-  if (page >= 1 && page <= totalPages.value) {
-    currentPage.value = page;
-    loadNews(newsStore.currentTab, page);
-  }
-};
+watch(
+  [() => activeTab.value, () => sortBy.value, () => currentPage.value],
+  ([tabId, sortOption, page], [oldTabId, oldSortOption]) => {
+    if (tabId !== oldTabId || sortOption !== oldSortOption) {
+      currentPage.value = 1;
+      loadNews(tabId, 1, sortOption);
+    } else {
+      loadNews(tabId, page, sortOption);
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
@@ -76,6 +69,18 @@ const goToPage = (page: number) => {
         <br />AI 챗봇과 기사에 대해 대화하며 궁금한 점을 물어보고, <br />한눈에
         보기 쉬운 대시보드를 통해 나의 뉴스 소비 패턴도 확인할 수 있습니다.
       </p>
+
+      <ContentBox class="news__tabs">
+        <StateButton
+          v-for="tab in tabs"
+          :key="tab.id"
+          type="state"
+          :is-active="activeTab === tab.id"
+          @click="activeTab = tab.id"
+        >
+          {{ tab.label }}
+        </StateButton>
+      </ContentBox>
     </div>
     <ContentBox class="news__box">
       <div class="news__box__title-container">
@@ -104,7 +109,7 @@ const goToPage = (page: number) => {
             <option value="recommend">추천순</option>
           </select>
         </div>
-        <!-- 숨겨진 문구 -->
+
         <span v-if="userStore.isLoggedIn" class="news__box__subtitle-loggedin">
           취향에 맞는 맞춤 뉴스를 골라 전달해드려요.
         </span>
@@ -114,21 +119,7 @@ const goToPage = (page: number) => {
         <NewsCard :data="news" />
       </div>
 
-      <div class="pagination">
-        <button
-          @click="goToPage(currentPage - 1)"
-          :disabled="currentPage === 1"
-        >
-          &lt;
-        </button>
-        <span> {{ currentPage }} / {{ totalPages }}</span>
-        <button
-          @click="goToPage(currentPage + 1)"
-          :disabled="currentPage === totalPages"
-        >
-          >
-        </button>
-      </div>
+      <PaginationButton v-model="currentPage" :totalPages="totalPages" />
     </ContentBox>
   </div>
 </template>
@@ -152,6 +143,12 @@ const goToPage = (page: number) => {
     color: #575757;
     line-height: normal;
     margin: 15px 0 30px;
+  }
+  &__tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px 30px !important;
   }
 
   &__box {
@@ -208,27 +205,5 @@ const goToPage = (page: number) => {
       margin-left: 30px;
     }
   }
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  margin-top: 20px;
-}
-
-.pagination button {
-  font-size: 13px;
-  padding: 4px 8px;
-  border: none;
-  background-color: #0c3057;
-  color: white;
-  border-radius: 100px;
-}
-
-.pagination button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
 }
 </style>

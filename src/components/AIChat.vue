@@ -35,7 +35,7 @@ const sendMessage = async () => {
 </script>
 
 <template>
-  <ContentBox class="assistant">
+  <ContentBox class="ai-chat">
     <h1 class="title">🤖 AI 뉴스비서 <strong>뉴비</strong></h1>
     <p class="description">
       <strong>뉴비</strong>에게 이 기사에 대해 궁금한 점을 자유롭게 물어보세요!
@@ -74,7 +74,7 @@ const sendMessage = async () => {
 </template>
 
 <style scoped lang="scss">
-.assistant {
+.ai-chat {
   display: flex;
   flex-direction: column;
   gap: 20px;

@@ -5,10 +5,10 @@ import NewsView from "@/views/NewsView.vue";
 import LoginView from "@/views/LoginView.vue";
 import NewsDetailView from "@/views/NewsDetailView.vue";
 import RegisterView from "@/views/RegisterView.vue";
-import DashBoardView from "@/views/DashBoardView.vue";
-import BoardView from "@/views/BoardView.vue";
-import BoardListView from "@/views/BoardListView.vue";
 import BoardWriteView from "@/views/BoardWriteView.vue";
+import BoardDetailView from "@/views/BoardDetailView.vue";
+import BoardView from "@/views/BoardView.vue";
+import DashBoardView from "@/views/DashBoardView.vue";
 
 const router = createRouter({
   history: createWebHistory("/"),
@@ -48,12 +48,12 @@ const router = createRouter({
     {
       path: "/board",
       name: "board",
-      component: BoardListView,
+      component: BoardView,
     },
     {
-      path: "/board/:id",
+      path: "/boardDeatil/:id",
       name: "boardDetail",
-      component: BoardView,
+      component: BoardDetailView,
       meta: { requiresAuth: true },
     },
     {

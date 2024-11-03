@@ -9,7 +9,7 @@ import router from "@/router";
 import LeftArrow from "@/components/icon/LeftArrow.svg";
 import { deleteLike, getLikeStatus, getNews, postLike } from "@/api/api";
 import type { INews } from "@/types/data";
-import NewsPreview2 from "@/components/NewsPreview2.vue";
+import ArticlePreview from "@/components/ArticlePreview.vue";
 
 const news = ref();
 const route = useRoute();
@@ -17,10 +17,6 @@ const newsId = ref<string>("0");
 const relatedNews = ref<INews[] | null>(null);
 
 const { formatDate } = useDate();
-
-const goBack = () => {
-  router.push("/news");
-};
 
 const liked = ref(false);
 const likeCount = ref(0);
@@ -55,7 +51,7 @@ async function fetchNews() {
   newsId.value = route.params.id as string;
 
   try {
-    const response = await getNews(Number(newsId.value));
+    const response = await getNews(newsId.value);
     const fetchedNews = response.data.data;
     news.value = fetchedNews;
     likeCount.value = fetchedNews.article_interaction.likes;
@@ -90,9 +86,9 @@ watch(
 </script>
 
 <template>
-  <button @click="goBack" class="back-btn"><LeftArrow /></button>
+  <button @click="() => router.back()" class="back-btn"><LeftArrow /></button>
   <div v-if="news" class="news-detail">
-    <div class="main-content">
+    <div class="article__container">
       <ContentBox>
         <div class="article">
           <div class="article__header">
@@ -106,9 +102,9 @@ watch(
             </div>
           </div>
 
-          <p class="content">{{ news?.content }}</p>
+          <p class="article__content">{{ news?.content }}</p>
 
-          <div class="tags">
+          <div class="article__tags">
             <StateButton
               v-for="(tag, index) in news.keywords"
               :key="index"
@@ -119,8 +115,8 @@ watch(
             </StateButton>
           </div>
 
-          <div class="content__footer">
-            <div class="content__emoji">
+          <div class="article__content__footer">
+            <div class="article__content__emoji">
               <span class="emoji-btn">
                 <span v-if="liked"> ❤️ </span> <span v-else>🤍</span
                 >{{ likeCount }}
@@ -137,7 +133,9 @@ watch(
             </button>
             <!-- 애니메이션 하트 -->
             <transition name="heart-float">
-              <span v-if="isAnimating" class="floating-heart">❤️</span>
+              <span v-if="isAnimating" class="floating-heart">
+                {{ liked ? "❤️" : "🤍" }}
+              </span>
             </transition>
           </div>
         </div>
@@ -146,9 +144,9 @@ watch(
     </div>
 
     <ContentBox class="sidebar">
-      <h1 class="title">📰 관련 기사</h1>
+      <h1 class="sidebar__title">📰 관련 기사</h1>
       <div v-for="(news, index) in relatedNews" :key="index">
-        <NewsPreview2 :to="`/news/${news.id}`" :news="news" />
+        <ArticlePreview :to="`/news/${news.id}`" :news="news" />
       </div>
     </ContentBox>
   </div>
@@ -163,7 +161,11 @@ watch(
   display: flex;
   gap: 20px;
 
-  .main-content {
+  @media (max-width: 800px) {
+    flex-direction: column;
+  }
+
+  .article__container {
     flex: 2;
     display: flex;
     flex-direction: column;
@@ -172,94 +174,90 @@ watch(
 
   .sidebar {
     flex: 1;
+    &__title {
+      font-weight: 700;
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
   }
 
-  @media (max-width: 768px) {
-    flex-direction: column;
-  }
-}
-.article {
-  font-size: 1rem;
-  padding: 20px;
-  &__header {
-    color: #888;
-    font-size: 0.9rem;
-    margin-bottom: 10px;
-    &-title {
-      margin: 12px 0;
-      font-size: 1.6rem;
-      font-weight: bold;
-      color: #1c1c1e;
+  .article {
+    font-size: 1rem;
+    padding: 20px;
+    &__header {
+      color: #888;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+      &-title {
+        margin: 12px 0;
+        font-size: 1.6rem;
+        font-weight: bold;
+        color: #1c1c1e;
+      }
+      &-writer {
+        display: flex;
+        gap: 10px;
+      }
     }
-    &-writer {
+
+    &__content {
+      margin: 16px 0;
+      line-height: 1.6;
+
+      &__footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 30px;
+      }
+
+      &__emoji {
+        color: #888;
+        font-size: 16px;
+        display: flex;
+        gap: 30px;
+        align-items: center;
+        &-eye {
+          font-size: 17px;
+        }
+      }
+    }
+
+    &__tags {
       display: flex;
-      gap: 10px;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 15px;
     }
   }
-}
 
-.title {
-  font-weight: 700;
-  font-size: 18px;
-  margin-bottom: 20px;
-}
-
-.content {
-  margin: 16px 0;
-  line-height: 1.6;
-
-  &__footer {
+  .emoji-btn {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-top: 30px;
-  }
-
-  &__emoji {
+    font-size: 15px;
     color: #888;
-    font-size: 16px;
-    display: flex;
-    gap: 30px;
-    align-items: center;
-    &-eye {
-      font-size: 17px;
+  }
+
+  .floating-heart {
+    position: absolute;
+    font-size: 24px;
+    color: red;
+    animation: heartFloat 0.6s ease-out forwards;
+  }
+
+  @keyframes heartFloat {
+    0% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
     }
-  }
-}
-
-.emoji-btn {
-  display: flex;
-  align-items: center;
-  font-size: 15px;
-  color: #888;
-}
-
-.tags {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 15px;
-}
-
-.floating-heart {
-  position: absolute;
-  font-size: 24px;
-  color: red;
-  animation: heartFloat 0.6s ease-out forwards;
-}
-
-@keyframes heartFloat {
-  0% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: translateY(-20px) scale(1.2);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-40px) scale(0.8);
+    50% {
+      opacity: 0.8;
+      transform: translateY(-20px) scale(1.2);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-40px) scale(0.8);
+    }
   }
 }
 </style>

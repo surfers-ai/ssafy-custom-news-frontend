@@ -39,8 +39,7 @@ const submitForm = async () => {
       router.push("/login");
     }
   } catch (error: any) {
-    console.error("Registration failed:", error);
-    if (error.response && error.response.data) {
+    if (error.response.data) {
       const errors = error.response.data;
 
       const msg = Object.entries(errors)

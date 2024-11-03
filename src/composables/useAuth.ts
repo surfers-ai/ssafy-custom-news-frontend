@@ -1,6 +1,6 @@
 import { useUserStore } from "@/store/user";
 import router from "@/router";
-import { loginApi, refreshApi } from "@/api/auth";
+import { loginApi } from "@/api/auth";
 import type { ILoginReq } from "@/types/auth";
 
 export function useAuth() {
@@ -21,23 +21,8 @@ export function useAuth() {
     }
   };
 
-  const refreshLogin = async () => {
-    try {
-      const refreshToken = userStore.token.refresh;
-      const response = await refreshApi(refreshToken);
-      const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
-        response.data;
-      userStore.setToken(newAccessToken, newRefreshToken);
-    } catch (error) {
-      console.error("토큰 갱신 오류:", error);
-      // 테스트용
-      userStore.setToken("access-test22", "refresh-test22");
-    }
-  };
-
   return {
     loginUser,
     logoutUser,
-    refreshLogin,
   };
 }

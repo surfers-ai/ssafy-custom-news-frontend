@@ -11,10 +11,10 @@ import {
 } from "chart.js";
 import ContentBox from "@/common/ContentBox.vue";
 import { ref, onMounted } from "vue";
-import NewsPreview from "@/components/NewsPreview.vue";
 import { getDashboard } from "@/api/api";
 import type { IArticle, IDashboard } from "@/types/data";
 import { useUserStore } from "@/store/user";
+import ArticlePreview from "@/components/ArticlePreview.vue";
 
 ChartJS.register(
   ArcElement,
@@ -251,7 +251,7 @@ onMounted(() => {
           있습니다.
         </p>
         <div v-for="(article, index) in favoriteArticles" :key="index">
-          <NewsPreview :to="`/news/${article.id}`" :news="article" />
+          <ArticlePreview :to="`/news/${article.id}`" :news="article" />
         </div>
       </ContentBox>
     </div>
