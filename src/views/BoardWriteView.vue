@@ -145,7 +145,7 @@ async function handlePostBoard() {
     padding: 8px;
     border-radius: 5px;
     border: 1px solid #ccc;
-    font-size: 1rem;
+    font-size: 14px;
   }
 
   &__textarea {
