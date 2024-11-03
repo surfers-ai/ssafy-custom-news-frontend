@@ -142,6 +142,7 @@ async function init() {
               "#4975C1",
               "#FCDC4B",
               "#FFB4CE",
+              "#D2C6B2",
             ],
           },
         ],
