@@ -54,7 +54,6 @@ async function handlePostBoard() {
         size="md"
         @click="handlePostBoard"
         isActive
-        class="submit-btn"
         :disabled="isDisabled"
       >
         작성 완료
@@ -135,7 +134,7 @@ async function handlePostBoard() {
       display: block;
       margin-bottom: 5px;
       font-weight: bold;
-      font-size: 1rem;
+      font-size: 14px;
     }
   }
 
@@ -146,6 +145,9 @@ async function handlePostBoard() {
     border-radius: 5px;
     border: 1px solid #ccc;
     font-size: 14px;
+    &::placeholder {
+      color: #aaa;
+    }
   }
 
   &__textarea {
@@ -172,7 +174,7 @@ async function handlePostBoard() {
     border-radius: 4px;
     display: flex;
     align-items: center;
-    font-size: 0.9rem;
+    font-size: 14px;
   }
 
   &__tag-remove {
@@ -187,11 +189,6 @@ async function handlePostBoard() {
     display: flex;
     justify-content: flex-end;
     margin-bottom: 2px;
-  }
-
-  .submit-btn {
-    padding: 10px 20px;
-    font-size: 1rem;
   }
 }
 </style>
