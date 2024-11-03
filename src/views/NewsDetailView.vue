@@ -140,7 +140,7 @@ watch(
           </div>
         </div>
       </ContentBox>
-      <AIChat :id="newsId" />
+      <AIChat :id="newsId" :key="newsId" />
     </div>
 
     <ContentBox class="sidebar">

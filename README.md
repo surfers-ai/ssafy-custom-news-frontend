@@ -43,7 +43,7 @@ npm install
 ## .env 파일 생성 및 환경변수 설정
 
 ```sh
-VITE_BASE_URL='http://api.ssafy-ds-pjt.com:8000'
+VITE_BASE_URL='YOUR_API_URL'
 ```
 
 ### Compile and Hot-Reload for Development
