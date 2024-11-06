@@ -89,7 +89,7 @@ const submitForm = async () => {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding-top: 80px;
+  padding-top: 50px;
   align-items: center;
   justify-content: center;
   min-height: 100vh;

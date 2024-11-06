@@ -31,7 +31,7 @@ SSAFY 개인 맞춤형 뉴스 서비스는 AI 기반 뉴스 추천 기능을 통
 - **뉴스 ai 챗봇**: 뉴스에 대해 ai와 대화할 수 있습니다.
   <img width="1011" alt="image" src="https://github.com/user-attachments/assets/4cb07452-6010-47a3-b8eb-ea057ed32fc7">
 
-- **커뮤니티 게시판**: 글/댓글 작성 가능, 맞춤 뉴스가 추천됩니다.
+- **커뮤니티**: 글/댓글 작성 가능, 맞춤 뉴스가 추천됩니다.
  <table>
   <tr>
     <td>

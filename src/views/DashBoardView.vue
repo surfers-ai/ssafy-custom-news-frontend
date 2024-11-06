@@ -197,7 +197,7 @@ onMounted(() => {
     <h1 class="title">DASHBOARD</h1>
     <p class="subtitle">
       <strong>{{ userStore.username }}</strong> 님의 취향을 한눈에 보여드려요.
-      <br />방문 기록 데이터를 기반으로 나의 관심 분야를 확인하고, <br />관심
+      <br />방문 기록 및 좋아요 데이터를 기반으로 나의 관심 분야를 확인하고, <br />관심
       분야에 맞는 기사를 추천 받아보세요. <br />여러분의 취업 여정의 로드맵을
       제공합니다.
     </p>
