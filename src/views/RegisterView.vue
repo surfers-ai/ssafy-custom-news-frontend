@@ -13,6 +13,7 @@ import { useValidation } from "@/composables/useValidation";
 const name = ref("");
 const email = ref("");
 const password = ref("");
+const selectedJob = ref("");
 
 const { validatePwd } = useValidation();
 
@@ -23,6 +24,10 @@ const handlePwdInput = () => {
   pwdError.value = validatePwd(password.value);
 };
 const submitForm = async () => {
+  if (!selectedJob.value) {
+    alert("희망 직무를 선택해주세요.");
+    return;
+  }
   const req: IRegisterReq = {
     username: name.value,
     email: email.value,
@@ -58,13 +63,13 @@ const submitForm = async () => {
 </script>
 
 <template>
-  <div class="signup-page">
-    <div class="signup-header">
+  <div class="signup">
+    <div class="signup__header">
       <h1>SSAFYNEWS</h1>
       <p>맞춤형 AI 뉴스 큐레이션</p>
     </div>
 
-    <div class="signup-form">
+    <div class="signup__box">
       <h2>회원가입</h2>
       <p>SSAFY 뉴스 서비스에 오신 것을 환영합니다</p>
 
@@ -72,6 +77,14 @@ const submitForm = async () => {
         <div>
           <label>이름</label>
           <TheInput placeholder="이름" v-model="name" />
+        </div>
+
+        <div>
+          <label>희망 직무</label>
+          <select v-model="selectedJob" class="job-select" required>
+            <option value="" disabled selected></option>
+            <option value="DS">데이터 사이언티스트</option>
+          </select>
         </div>
 
         <div>
@@ -106,7 +119,7 @@ const submitForm = async () => {
 </template>
 
 <style scoped lang="scss">
-.signup-page {
+.signup {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -117,7 +130,7 @@ const submitForm = async () => {
   font-family: Arial, sans-serif;
   padding-top: 10px;
 
-  .signup-header {
+  &__header {
     text-align: center;
     margin-bottom: 20px;
 
@@ -133,7 +146,7 @@ const submitForm = async () => {
     }
   }
 
-  .signup-form {
+  &__box {
     background-color: #fff;
     padding: 30px;
     border-radius: 8px;
@@ -166,6 +179,12 @@ const submitForm = async () => {
       }
     }
 
+    .job-select {
+      width: 100%;
+      padding: 9px 10px;
+      border: 1px solid #e5e5ea;
+      border-radius: 8px;
+    }
     .form-btn {
       margin: 20px 0 10px;
     }

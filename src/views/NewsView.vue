@@ -59,6 +59,10 @@ watch(
         <br />AI 챗봇과 기사에 대해 대화하며 궁금한 점을 물어보고, <br />한눈에
         보기 쉬운 대시보드를 통해 나의 뉴스 소비 패턴도 확인할 수 있습니다.
       </p>
+      <p v-if="userStore.isLoggedIn" class="news__description--job">
+        <span style="text-decoration: underline">데이터사이언티스트 </span>
+        관련 정보를 보시려면 IT/과학 카테고리를 클릭하세요 !
+      </p>
 
       <ContentBox class="news__tabs">
         <StateButton
@@ -133,8 +137,14 @@ watch(
     font-weight: 400;
     color: #575757;
     line-height: normal;
-    margin: 15px 0 30px;
+    margin: 15px 0 25px;
+
+    &--job {
+      color: red;
+      margin-bottom: 20px;
+    }
   }
+
   &__tabs {
     display: flex;
     flex-wrap: wrap;
