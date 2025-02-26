@@ -1,16 +1,15 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { onMounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 import ContentBox from "@/common/ContentBox.vue";
 import NewsSearchCard from "@/components/NewsSearchCard.vue";
 import { searchNews } from "@/api/api";
 import type { INews } from "@/types/data";
-import { useUserStore } from "@/store/user";
 
-const userStore = useUserStore();
+const router = useRouter();
 const route = useRoute();
-const searchQuery = ref((route.query.q as string) || "");
+const searchQuery = ref("");
 const newsList = ref<INews[]>([]);
 
 async function search(searchText: string): Promise<INews[]> {
@@ -21,6 +20,8 @@ async function search(searchText: string): Promise<INews[]> {
 watch(
   [() => searchQuery.value],
   async ([query]) => {
+    if (!query) return;
+
     try {
       const articles = await search(query);
       newsList.value = articles;
@@ -30,6 +31,13 @@ watch(
   },
   { immediate: true }
 );
+
+onMounted(() => {
+  // 라우터가 준비된 후 쿼리 파라미터 읽기
+  router.isReady().then(() => {
+    searchQuery.value = (route.query.q as string) || "";
+  });
+});
 </script>
 
 <template>
@@ -37,7 +45,7 @@ watch(
     <ContentBox class="news__box">
       <div class="news__box__title-container">
         <h1 class="news__box__title">
-          <span v-if="userStore.isLoggedIn"
+          <span
             ><span class="news__box__title-username">{{ searchQuery }}</span> 에
             대한 검색결과입니다.</span
           >
