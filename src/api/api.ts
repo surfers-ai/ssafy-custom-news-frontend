@@ -1,6 +1,12 @@
 import type { IBoardReq, IChatReq } from "@/types/api";
 import http from "./core";
 
+export function searchNews(searchText: string) {
+  return http.get(
+    searchText ? `/news/search/?q=${searchText}` : "/news/search/"
+  );
+}
+
 export function getNewsList(
   category: string,
   sort: "latest" | "recommend",

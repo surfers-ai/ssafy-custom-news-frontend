@@ -4,7 +4,7 @@ import { useDate } from "@/composables/useDate";
 import type { INews } from "@/types/data";
 import { computed } from "vue";
 
-const props = defineProps<{ data: INews }>();
+const props = defineProps<{ data: INews; simple?: boolean }>();
 
 const { formatDate } = useDate();
 const date = computed(() => formatDate(props.data.write_date));
@@ -24,8 +24,12 @@ const date = computed(() => formatDate(props.data.write_date));
       <p class="description">{{ props.data.content }}</p>
     </RouterLink>
     <div class="stats">
-      <span>❤️ {{ props.data.article_interaction.likes }}</span>
-      <span>👀 {{ props.data.article_interaction.read }}</span>
+      <span v-if="!props.simple"
+        >❤️ {{ props.data.article_interaction.likes }}</span
+      >
+      <span v-if="!props.simple"
+        >👀 {{ props.data.article_interaction.read }}</span
+      >
       <a :href="props.data.url">📄</a>
     </div>
 
