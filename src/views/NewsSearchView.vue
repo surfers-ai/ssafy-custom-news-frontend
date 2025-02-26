@@ -3,7 +3,7 @@ import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
 import ContentBox from "@/common/ContentBox.vue";
-import NewsCard from "@/components/NewsCard.vue";
+import NewsSearchCard from "@/components/NewsSearchCard.vue";
 import { searchNews } from "@/api/api";
 import type { INews } from "@/types/data";
 import { useUserStore } from "@/store/user";
@@ -23,7 +23,6 @@ watch(
   async ([query]) => {
     try {
       const articles = await search(query);
-      console.log(articles);
       newsList.value = articles;
     } catch (error) {
       console.error("Error fetching news:", error);
@@ -46,7 +45,7 @@ watch(
       </div>
 
       <div class="news__box__cards" v-for="news in newsList" :key="news.id">
-        <NewsCard :data="news" :simple="true" />
+        <NewsSearchCard :data="news" :simple="true" />
       </div>
     </ContentBox>
   </div>

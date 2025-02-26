@@ -24,8 +24,6 @@ const date = computed(() => formatDate(props.data.write_date));
       <p class="description">{{ props.data.content }}</p>
     </RouterLink>
     <div class="stats">
-      <span>❤️ {{ props.data.article_interaction.likes }}</span>
-      <span>👀 {{ props.data.article_interaction.read }}</span>
       <a :href="props.data.url">📄</a>
     </div>
 

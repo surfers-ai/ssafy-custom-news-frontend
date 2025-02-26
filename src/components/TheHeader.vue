@@ -27,7 +27,7 @@ const refreshPage = (event: MouseEvent) => {
 };
 
 const searchArticle = () => {
-  router.push(`/news/search?q=${searchQuery.value}`);
+  document.location.href = `/news/search?q=${searchQuery.value}`;
 };
 </script>
 
