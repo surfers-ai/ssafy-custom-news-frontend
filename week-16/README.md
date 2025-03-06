@@ -1,78 +1,37 @@
-# SSAFYNEWS 📰
+# 16주차 관통 PJT: 백엔드&프론트엔드 프로젝트 구축(Vue와 Django)
 
-> Vue 3 기반 개인 맞춤형 뉴스 큐레이팅 서비스
+> **목적: 학생들이 뷰와 장고를 활용하여 카프카와 플링크가 내부적으로 돌아가는 프론트와 백앤드를 구축한다**
+>
+> 세부사항:
+>
+> - 뷰와 장고는 학생들이 앞 단에서 배운 내용들만 가능하면 사용해야 한다.
+>   - 이 부분은 지난 번 만들었던 최종 결과물에서 커뮤니티와 기사 주제로 대화 기능 제거
+> - 데이터가 처리되는 것을 시각화 해야한다
+>   - 예를들어, 새로고침 버튼을 누르면 RSS를 활용하여 새로운 데이터가 적재되고, 카프카와 플링크가 동작하여 뉴스 기사가 새롭게 화면에 뷰잉되어야 한다.
 
-SSAFY 개인 맞춤형 뉴스 서비스는 AI 기반 뉴스 추천 기능을 통해 사용자의 취향에 맞춘 다양한 뉴스를 제공하며, 뉴스 기반 ai 챗봇 기능을 제공합니다.
+## 목차
 
+1. 프로젝트 설치
+2. 실행 및 백엔드 연동 확인
 
+## 1. 프로젝트 설치
 
-
-## 🌟 주요 기능
-
-- **회원가입 및 로그인**: 개인 맞춤형 뉴스 큐레이팅 기능
-
-<table>
-  <tr>
-    <td>
-      <img src="https://github.com/user-attachments/assets/aa2e92c8-d4ac-46e6-aa09-36e73c9bd352" alt="image" width="500"/>
-    </td>
-    <td>
-      <img src="https://github.com/user-attachments/assets/dd88eafa-13e4-4a77-b9b7-479ccbbcefa8" alt="image" width="500"/>
-    </td>
-  </tr>
-</table>
-
-- **AI 맞춤 뉴스 추천**: 개인 맞춤형 뉴스 큐레이팅 기능 : 카테고리별, 최신순/추천순 필터링 
- <img width="1512" alt="image" src="https://github.com/user-attachments/assets/b16c92cb-1bad-45db-9fd9-92ae706aa571">
- 
-- **뉴스 상세 페이지**: 글을 '좋아요'하여 저장할 수 있으며, 사이드바에 글과 관련된 뉴스가 표시됩니다.
- <img width="1512" alt="image" src="https://github.com/user-attachments/assets/ab9a2093-bf6f-448f-bec7-d6348053fd15">
-
-- **뉴스 ai 챗봇**: 뉴스에 대해 ai와 대화할 수 있습니다.
-  <img width="1011" alt="image" src="https://github.com/user-attachments/assets/4cb07452-6010-47a3-b8eb-ea057ed32fc7">
-
-- **커뮤니티**: 글/댓글 작성 가능, 맞춤 뉴스가 추천됩니다.
- <table>
-  <tr>
-    <td>
-      <img src="https://github.com/user-attachments/assets/e699f5f6-ac01-4e09-85a1-2feaba6d58b7" alt="image" width="500"/>
-    </td>
-    <td>
-      <img src="https://github.com/user-attachments/assets/5c0cd489-ad24-4647-acce-336101f54f4f" alt="image" width="500"/>
-    </td>
-  </tr>
-</table>
-
-- **게시판 글작성**: 카테고리 및 해시태그 설정 가능
-  <img width="1503" alt="image" src="https://github.com/user-attachments/assets/05b68bbd-ea6b-4ec1-bbfc-944490d847f6">
-
-- **대시보드**: 개인의 활동을 시각화한 대시보드입니다.
-  - 나의 관심 카테고리 : 사용자가 주로 읽은 카테고리를 시각화
-  - 주요 키워드 : 사용자가 관심있게 본 뉴스 기사들에서 많이 등장한 핵심 키워드 추출
-  - 주간 읽은 기사 : 최근 일주일동안 하루에 몇개의 기사를 읽었는지 시각화
-  - 좋아요 누른 기사 : 사용자가 좋아요한 기사들을 한번에 모아 확인 
-<img width="1206" alt="image" src="https://github.com/user-attachments/assets/12b5a052-9245-4a51-a094-c709846fecc2">
-
----
-
-## 🚀 시작하기
-
-## Recommended IDE Setup
+### 1.1. Recommended IDE Setup
 
 [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
 
-## Node.js install
+### 1.2.Node.js 설치
 
 이 프로젝트를 실행하려면 [Node.js](https://nodejs.org/)가 필요합니다. 설치가 되어 있지 않다면 [여기](https://nodejs.org/)에서 다운로드 및 설치를 진행해 주세요.
 
-## clone this project
+### 1.3.저장소 클론
 
 ```sh
 git clone https://github.com/surfers-ai/ssafy-custom-news-frontend.git
 cd ssafy-custom-news-frontend
 ```
 
-## Project Setup
+### 1.4. npm 종속성 설치
 
 프로젝트의 종속성을 설치합니다.
 
@@ -80,32 +39,46 @@ cd ssafy-custom-news-frontend
 npm install
 ```
 
-## .env 파일 생성 및 환경변수 설정
+### 1.5. .env 파일 생성 및 환경변수 설정
 
 ```sh
-VITE_BASE_URL='http://api.ssafy-ds-pjt.com:8000'
+VITE_BASE_URL='http://localhost:8000'
 ```
 
-### Compile and Hot-Reload for Development
+## 2. 실행 및 백엔드 연동 확인
 
-개발 환경에서 프로젝트 실행
+### 2.1. 개발 환경에서 프로젝트 실행
 
 ```sh
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
-
-타입 확인, 컴파일, 코드 압축을 포함하여 프로젝트를 프로덕션 환경에 맞게 빌드
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
+### 2.2. (optional) eslint 실행 [ESLint](https://eslint.org/)
 
 eslint 실행 명령어
 
 ```sh
 npm run lint
 ```
+
+
+### 2.3. 배포 환경에서 프로젝트 빌드 및 실행
+
+타입 확인, 컴파일, 코드 압축을 포함하여 프로젝트를 프로덕션 환경에 맞게 빌드
+
+```sh
+npm run build
+npm run start
+```
+
+### 2.4. 브라우저에서 백엔드와 연동 확인
+개발환경 url (http://localhost:5173), 배포환경 url (http://localhost:4173) 에 접속해 데이터가 잘 보이는지 확인
+
+메인 페이지
+<img width="1439" alt="image" src="https://github.com/user-attachments/assets/3f4c3820-8124-4e97-84f2-fd981b3b2b83" />
+
+대시보드 페이지
+<img width="1352" alt="image" src="https://github.com/user-attachments/assets/591d7627-6b27-4e99-982a-214efe6f8835" />
+
+
+
