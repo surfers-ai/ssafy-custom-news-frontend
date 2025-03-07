@@ -18,14 +18,13 @@ const totalPages = ref(1);
 
 async function fetchNews(
   tabId: number,
-  page: number,
-  sortBy: "latest" | "recommend"
+  page: number
 ): Promise<{
   articles: INews[];
   pagination: { total_pages: number; limit: number };
 }> {
   const category = tabs.find((tab) => tab.id === tabId)?.value || "";
-  const response = await getNewsList(category, sortBy, page);
+  const response = await getNewsList(category, "latest", page);
   return response.data.data;
 }
 
@@ -36,7 +35,7 @@ watch(
       if (tabId !== oldTabId || sortOption !== oldSortOption) {
         currentPage.value = 1;
       }
-      const data = await fetchNews(tabId, currentPage.value, sortOption);
+      const data = await fetchNews(tabId, currentPage.value);
       newsList.value = data.articles;
       totalPages.value = data.pagination.total_pages;
     } catch (error) {
@@ -97,12 +96,6 @@ watch(
         >
           ❗️로그인하시면 취향에 맞는 맞춤 뉴스를 전달해드려요.
         </RouterLink>
-        <div class="filters__container">
-          <select class="filters" v-model="sortBy">
-            <option value="latest">최신순</option>
-            <option value="recommend">추천순</option>
-          </select>
-        </div>
 
         <span v-if="userStore.isLoggedIn" class="news__box__subtitle-loggedin">
           취향에 맞는 맞춤 뉴스를 골라 전달해드려요.
