@@ -7,30 +7,36 @@
 > - 사전에 Postgresql을 배울 때 여기서 사용할 것이라고 명확한 안내 필요
 
 ## 목차
+1. UserInteraction 데이터 생성
+2. /news-list에서 latest, recommend 파라미터가 다르게 처리되는지 확인
+   
+## 1. UserInteraction 데이터 생성
+프론트엔드 화면에서 기사 읽기 및 좋아요 클릭을 통해 UserInteraction 데이터를 생성합니다.
 
-1. 최신순, 추천순 UI 확인
-2. latest, recommend 옵션과 함께 /news-list 요청되는지 확인
+<img width="1366" alt="image" src="https://github.com/user-attachments/assets/cda9d175-bb4f-4eb8-b1b1-dfb500be3f63" />
 
-## 1. 최신순, 추천순 UI 확인
-아래 명령어 실행 후 http://localhost:5173/news 주소로 접속해 최신순, 추천순 UI 확인
-
-```bash
-npm i
-npm run dev
+SQL 쿼리를 통해 직접 생성하는 것도 가능합니다.
+```sql
+INSERT INTO mynews_userarticleinteraction ("interaction_type", interaction_date, "article_id", "user_id") VALUES ('read', NOW(), 22, 1)
 ```
 
-<img width="1344" alt="image" src="https://github.com/user-attachments/assets/4cbf36ed-bca9-4002-b224-9bdcad78073e" />
-
-<img width="369" alt="image" src="https://github.com/user-attachments/assets/8e251397-0e1c-40c6-b783-35f5f53488cc" />
+<img width="751" alt="image" src="https://github.com/user-attachments/assets/8319497f-c930-480b-a7c5-19c7f4e391fb" />
 
 
+## 2. /news-list에서 latest, recommend 파라미터가 다르게 처리되는지 확인
+아래 url로 접속해 파라미터 별로 데이터 응답이 달라지는 것을 확인합니다.
 
-## 2. latest, recommend 옵션과 함께 /news-list 요청되는지 확인
+latest
 
-최신순, 추천순 옵션에 따라 뉴스 목록이 달라지는지 확인합니다.
+http://localhost:8000/news-list/?sort_by=latest&page=1
 
-<img width="1467" alt="image" src="https://github.com/user-attachments/assets/d41b8061-510e-44f8-987f-cdf867478e70" />
+<img width="1728" alt="image" src="https://github.com/user-attachments/assets/ce5e9a57-0544-4d2d-974c-b2dbbecdea81" />
 
-<img width="1374" alt="image" src="https://github.com/user-attachments/assets/15a2905a-65fc-4ccc-9aaf-7e3f292c46b0" />
+
+recommend
+
+http://localhost:8000/news-list/?sort_by=recommend&page=1
+
+<img width="1728" alt="image" src="https://github.com/user-attachments/assets/5ebe2c9a-dcef-4957-a822-99fd37e8884b" />
 
 
