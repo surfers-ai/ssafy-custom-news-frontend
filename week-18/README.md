@@ -1,84 +1,36 @@
-# 16주차 관통 PJT: 백엔드&프론트엔드 프로젝트 구축(Vue와 Django)
+# 18주차 관통 PJT: 맞춤형 큐레이션을 위한 추천시스템 구현(OpenAI + Vector Search)
 
-> **목적: 학생들이 뷰와 장고를 활용하여 카프카와 플링크가 내부적으로 돌아가는 프론트와 백앤드를 구축한다**
+> **목적: 생성형 AI를 사용하기 위한 큐레이션 시스템 구현한다**
 >
 > 세부사항:
->
-> - 뷰와 장고는 학생들이 앞 단에서 배운 내용들만 가능하면 사용해야 한다.
->   - 이 부분은 지난 번 만들었던 최종 결과물에서 커뮤니티와 기사 주제로 대화 기능 제거
-> - 데이터가 처리되는 것을 시각화 해야한다
->   - 예를들어, 새로고침 버튼을 누르면 RSS를 활용하여 새로운 데이터가 적재되고, 카프카와 플링크가 동작하여 뉴스 기사가 새롭게 화면에 뷰잉되어야 한다.
+> - Postgresql을 사용해서 진행
+> - 사전에 Postgresql을 배울 때 여기서 사용할 것이라고 명확한 안내 필요
 
 ## 목차
 
-1. 프로젝트 설치
-2. 실행 및 백엔드 연동 확인
+1. 최신순, 추천순 UI 확인
+2. latest, recommend 옵션과 함께 /news-list 요청되는지 확인
 
-## 1. 프로젝트 설치
+## 1. 최신순, 추천순 UI 확인
+아래 명령어 실행 후 http://localhost:5173/news 주소로 접속해 최신순, 추천순 UI 확인
 
-### 1.1. Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-### 1.2.Node.js 설치
-
-이 프로젝트를 실행하려면 [Node.js](https://nodejs.org/)가 필요합니다. 설치가 되어 있지 않다면 [여기](https://nodejs.org/)에서 다운로드 및 설치를 진행해 주세요.
-
-### 1.3.저장소 클론
-
-```sh
-git clone https://github.com/surfers-ai/ssafy-custom-news-frontend.git
-cd ssafy-custom-news-frontend
-```
-
-### 1.4. npm 종속성 설치
-
-프로젝트의 종속성을 설치합니다.
-
-```sh
-npm install
-```
-
-### 1.5. .env 파일 생성 및 환경변수 설정
-
-```sh
-VITE_BASE_URL='http://localhost:8000'
-```
-
-## 2. 실행 및 백엔드 연동 확인
-
-### 2.1. 개발 환경에서 프로젝트 실행
-
-```sh
+```bash
+npm i
 npm run dev
 ```
 
-### 2.2. (optional) eslint 실행 [ESLint](https://eslint.org/)
+<img width="1344" alt="image" src="https://github.com/user-attachments/assets/4cbf36ed-bca9-4002-b224-9bdcad78073e" />
 
-eslint 실행 명령어
-
-```sh
-npm run lint
-```
+<img width="369" alt="image" src="https://github.com/user-attachments/assets/8e251397-0e1c-40c6-b783-35f5f53488cc" />
 
 
-### 2.3. 배포 환경에서 프로젝트 빌드 및 실행
 
-타입 확인, 컴파일, 코드 압축을 포함하여 프로젝트를 프로덕션 환경에 맞게 빌드
+## 2. latest, recommend 옵션과 함께 /news-list 요청되는지 확인
 
-```sh
-npm run build
-npm run start
-```
+최신순, 추천순 옵션에 따라 뉴스 목록이 달라지는지 확인합니다.
 
-### 2.4. 브라우저에서 백엔드와 연동 확인
-개발환경 url (http://localhost:5173), 배포환경 url (http://localhost:4173) 에 접속해 데이터가 잘 보이는지 확인
+<img width="1467" alt="image" src="https://github.com/user-attachments/assets/d41b8061-510e-44f8-987f-cdf867478e70" />
 
-메인 페이지
-<img width="1439" alt="image" src="https://github.com/user-attachments/assets/3f4c3820-8124-4e97-84f2-fd981b3b2b83" />
-
-대시보드 페이지
-<img width="1352" alt="image" src="https://github.com/user-attachments/assets/591d7627-6b27-4e99-982a-214efe6f8835" />
-
+<img width="1374" alt="image" src="https://github.com/user-attachments/assets/15a2905a-65fc-4ccc-9aaf-7e3f292c46b0" />
 
 
