@@ -1,4 +1,4 @@
-import type { IBoardReq, IChatReq } from "@/types/api";
+import type { IBoardReq } from "@/types/api";
 import http from "./core";
 
 export function searchNews(searchText: string) {
@@ -30,9 +30,6 @@ export function getLikeStatus(id: string) {
   return http.get(`/news/like/?article_id=${id}`);
 }
 
-export function postChat(msg: IChatReq) {
-  return http.post("/news/chat/", msg);
-}
 export function postLike(data: { article_id: string }) {
   return http.post("/news/like/", data);
 }

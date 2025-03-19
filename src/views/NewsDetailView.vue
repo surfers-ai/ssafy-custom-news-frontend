@@ -3,7 +3,6 @@ import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import ContentBox from "@/common/ContentBox.vue";
 import StateButton from "@/common/StateButton.vue";
-import AIChat from "@/components/AIChat.vue";
 import { useDate } from "@/composables/useDate";
 import router from "@/router";
 import LeftArrow from "@/components/icon/LeftArrow.svg";
@@ -140,7 +139,6 @@ watch(
           </div>
         </div>
       </ContentBox>
-      <AIChat :id="newsId" :key="newsId" />
     </div>
 
     <ContentBox class="sidebar">

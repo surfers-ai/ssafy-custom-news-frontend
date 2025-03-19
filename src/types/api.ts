@@ -1,9 +1,4 @@
-import type { IArticle, IComments} from "./data";
-
-export interface IChatReq {
-  article_id: string;
-  question: string;
-}
+import type { IArticle, IComments } from "./data";
 
 export interface IBoardResponse {
   id: number;
