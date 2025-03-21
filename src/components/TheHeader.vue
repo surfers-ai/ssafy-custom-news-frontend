@@ -1,20 +1,7 @@
 <script setup lang="ts">
 import { RouterLink, useRouter } from "vue-router";
 
-import { useAuth } from "@/composables/useAuth";
-import { useUserStore } from "@/store/user";
-
-const { logoutUser } = useAuth();
-const userStore = useUserStore();
 const router = useRouter();
-
-const handleAuthAction = () => {
-  if (userStore.isLoggedIn) {
-    logoutUser();
-  } else {
-    router.push("/login");
-  }
-};
 
 const refreshPage = (event: MouseEvent) => {
   event.preventDefault();
@@ -34,9 +21,6 @@ const refreshPage = (event: MouseEvent) => {
       <nav class="menus">
         <router-link to="/news">나만의 뉴스 큐레이팅</router-link>
         <router-link to="/dashboard">대시보드</router-link>
-        <button @click="handleAuthAction">
-          {{ userStore.isLoggedIn ? "로그아웃" : "로그인" }}
-        </button>
       </nav>
     </header>
   </div>

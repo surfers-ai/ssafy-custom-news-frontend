@@ -1,14 +1,9 @@
-<script setup lang="ts">
-import { useAuth } from "@/composables/useAuth";
-
-const { logoutUser } = useAuth();
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <div class="footer">
     <a href="#">이용약관</a>
     <a href="#">개인정보처리방침</a>
-    <button @click="logoutUser">로그아웃</button>
     <p>© 2024 SSAFY NEWS. All rights reserved.</p>
   </div>
 </template>

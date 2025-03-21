@@ -1,18 +1,14 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { ref } from "vue";
 import ContentBox from "@/common/ContentBox.vue";
 import StateButton from "@/common/StateButton.vue";
 import { useDate } from "@/composables/useDate";
 import router from "@/router";
 import LeftArrow from "@/components/icon/LeftArrow.svg";
-import { deleteLike, getLikeStatus, getNews, postLike } from "@/api/api";
 import type { INews } from "@/types/data";
 import ArticlePreview from "@/components/ArticlePreview.vue";
 
 const news = ref();
-const route = useRoute();
-const newsId = ref<string>("0");
 const relatedNews = ref<INews[] | null>(null);
 
 const { formatDate } = useDate();
@@ -20,68 +16,6 @@ const { formatDate } = useDate();
 const liked = ref(false);
 const likeCount = ref(0);
 const isAnimating = ref(false);
-
-async function toggleLike() {
-  try {
-    await postLike({ article_id: newsId.value });
-    liked.value = true;
-    likeCount.value += 1;
-    triggerHeartAnimation();
-  } catch {
-    try {
-      await deleteLike(newsId.value);
-      liked.value = false;
-      likeCount.value -= 1;
-      triggerHeartAnimation();
-    } catch (deleteError) {
-      console.error("Error removing like:", deleteError);
-    }
-  }
-}
-
-function triggerHeartAnimation() {
-  isAnimating.value = true;
-  setTimeout(() => {
-    isAnimating.value = false;
-  }, 600);
-}
-
-async function fetchNews() {
-  newsId.value = route.params.id as string;
-
-  try {
-    const response = await getNews(newsId.value);
-    const fetchedNews = response.data.data;
-    news.value = fetchedNews;
-    likeCount.value = fetchedNews.article_interaction.likes;
-    relatedNews.value = fetchedNews.related_articles.articles;
-  } catch (error) {
-    console.error("Error fetching news:", error);
-  }
-}
-
-async function fetchLike() {
-  try {
-    const response = await getLikeStatus(newsId.value);
-    liked.value = response.data.is_liked ? true : false;
-  } catch (error) {
-    console.error("Error fetching news:", error);
-  }
-}
-
-onMounted(() => {
-  fetchNews();
-  fetchLike();
-});
-
-watch(
-  () => route.params.id,
-  (newId) => {
-    newsId.value = newId as string;
-    fetchNews();
-    fetchLike();
-  }
-);
 </script>
 
 <template>
@@ -127,7 +61,7 @@ watch(
 
               <a :href="news.url">📄</a>
             </div>
-            <button @click="toggleLike" class="emoji-btn">
+            <button class="emoji-btn">
               <span>{{ liked ? "❤️" : "🤍" }} 좋아요</span>
             </button>
             <!-- 애니메이션 하트 -->

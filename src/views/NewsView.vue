@@ -1,50 +1,17 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import ContentBox from "@/common/ContentBox.vue";
 import NewsCard from "@/components/NewsCard.vue";
 import { tabs } from "@/assets/data/tabs";
-import { getNewsList } from "@/api/api";
 import type { INews } from "@/types/data";
-import { useUserStore } from "@/store/user";
 import PaginationButton from "@/common/PaginationButton.vue";
 import StateButton from "@/common/StateButton.vue";
 
-const userStore = useUserStore();
 const newsList = ref<INews[]>([]);
 const sortBy = ref<"latest" | "recommend">("latest");
 const activeTab = ref(tabs[0].id);
 const currentPage = ref(1);
 const totalPages = ref(1);
-
-async function fetchNews(
-  tabId: number,
-  page: number,
-  sortBy: "latest" | "recommend"
-): Promise<{
-  articles: INews[];
-  pagination: { total_pages: number; limit: number };
-}> {
-  const category = tabs.find((tab) => tab.id === tabId)?.value || "";
-  const response = await getNewsList(category, sortBy, page);
-  return response.data.data;
-}
-
-watch(
-  [() => activeTab.value, () => sortBy.value, () => currentPage.value],
-  async ([tabId, sortOption], [oldTabId, oldSortOption]) => {
-    try {
-      if (tabId !== oldTabId || sortOption !== oldSortOption) {
-        currentPage.value = 1;
-      }
-      const data = await fetchNews(tabId, currentPage.value, sortOption);
-      newsList.value = data.articles;
-      totalPages.value = data.pagination.total_pages;
-    } catch (error) {
-      console.error("Error fetching news:", error);
-    }
-  },
-  { immediate: true }
-);
 </script>
 
 <template>
@@ -58,10 +25,6 @@ watch(
         <strong style="font-weight: bold">SSAFYNEWS</strong>에 빠져보세요.
         <br />AI 챗봇과 기사에 대해 대화하며 궁금한 점을 물어보고, <br />한눈에
         보기 쉬운 대시보드를 통해 나의 뉴스 소비 패턴도 확인할 수 있습니다.
-      </p>
-      <p v-if="userStore.isLoggedIn" class="news__description--job">
-        <span style="text-decoration: underline">데이터사이언티스트 </span>
-        관련 정보를 보시려면 IT/과학 카테고리를 클릭하세요 !
       </p>
 
       <ContentBox class="news__tabs">
@@ -78,35 +41,12 @@ watch(
     </div>
     <ContentBox class="news__box">
       <div class="news__box__title-container">
-        <h1 class="news__box__title">
-          <span v-if="userStore.isLoggedIn"
-            ><span class="news__box__title-username">{{
-              userStore.username
-            }}</span>
-            님을 위한</span
-          >
-          뉴스 피드
-          <span v-if="userStore.isLoggedIn" class="news__box__title-icon">
-            ❓</span
-          >
-        </h1>
-        <RouterLink
-          to="/login"
-          class="news__box__noti"
-          v-if="!userStore.isLoggedIn"
-        >
-          ❗️로그인하시면 취향에 맞는 맞춤 뉴스를 전달해드려요.
-        </RouterLink>
         <div class="filters__container">
           <select class="filters" v-model="sortBy">
             <option value="latest">최신순</option>
             <option value="recommend">추천순</option>
           </select>
         </div>
-
-        <span v-if="userStore.isLoggedIn" class="news__box__subtitle-loggedin">
-          취향에 맞는 맞춤 뉴스를 골라 전달해드려요.
-        </span>
       </div>
 
       <div class="news__box__cards" v-for="news in newsList" :key="news.id">

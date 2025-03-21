@@ -10,10 +10,8 @@ import {
   LinearScale,
 } from "chart.js";
 import ContentBox from "@/common/ContentBox.vue";
-import { ref, onMounted } from "vue";
-import { getDashboard } from "@/api/api";
-import type { IArticle, IDashboard } from "@/types/data";
-import { useUserStore } from "@/store/user";
+import { ref } from "vue";
+import type { IArticle } from "@/types/data";
 import ArticlePreview from "@/components/ArticlePreview.vue";
 
 ChartJS.register(
@@ -36,7 +34,6 @@ const categoryData = ref({
 });
 const categories = ref<[string, number][]>([]);
 const favoriteArticles = ref<IArticle[]>([]);
-const userStore = useUserStore();
 
 const keywordData = ref({
   labels: [] as string[],
@@ -125,81 +122,15 @@ const readBarOptions = {
     },
   },
 };
-
-async function init() {
-  try {
-    const data = <IDashboard>(await getDashboard()).data.data;
-
-    if (data.my_favorite_category) {
-      categoryData.value = {
-        labels: Object.keys(data.my_favorite_category),
-        datasets: [
-          {
-            data: Object.values(data.my_favorite_category),
-            backgroundColor: [
-              "#F67C6C",
-              "#7DA56F",
-              "#4975C1",
-              "#FCDC4B",
-              "#FFB4CE",
-              "#D2C6B2",
-            ],
-          },
-        ],
-      };
-      categories.value = Object.entries(data.my_favorite_category)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 3);
-    }
-    // 키워드 데이터 설정
-    if (data.my_favorite_key_word) {
-      keywordData.value = {
-        labels: Object.keys(data.my_favorite_key_word),
-        datasets: [
-          {
-            label: "키워드 빈도수",
-            data: Object.values(data.my_favorite_key_word),
-            backgroundColor: "#C7E4B8",
-          },
-        ],
-      };
-    }
-    // 주간 읽은 기사 데이터 설정
-    if (data.number_of_written_articles) {
-      readData.value = {
-        labels: Object.keys(data.number_of_written_articles),
-        datasets: [
-          {
-            label: "주간 읽은 기사 수",
-            data: Object.values(data.number_of_written_articles),
-            backgroundColor: "#DBB8E4",
-          },
-        ],
-      };
-    }
-
-    // 즐겨찾기한 기사 목록 설정
-    if (data.favorite_articles) {
-      favoriteArticles.value = data.favorite_articles;
-    }
-  } catch (error) {
-    console.error("Error fetching dashboard data:", error);
-  }
-}
-
-onMounted(() => {
-  init();
-});
 </script>
 
 <template>
   <div class="dashboard">
     <h1 class="title">DASHBOARD</h1>
     <p class="subtitle">
-      <strong>{{ userStore.username }}</strong> 님의 취향을 한눈에 보여드려요.
-      <br />방문 기록 및 좋아요 데이터를 기반으로 나의 관심 분야를 확인하고, <br />관심
-      분야에 맞는 기사를 추천 받아보세요. <br />여러분의 취업 여정의 로드맵을
-      제공합니다.
+      <br />방문 기록 및 좋아요 데이터를 기반으로 나의 관심 분야를 확인하고,
+      <br />관심 분야에 맞는 기사를 추천 받아보세요. <br />여러분의 취업 여정의
+      로드맵을 제공합니다.
     </p>
     <div class="layout">
       <ContentBox class="category">
