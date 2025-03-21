@@ -11,7 +11,6 @@ declare module 'vue' {
     BoardCard: typeof import('./src/components/BoardCard.vue')['default']
     CommentBox: typeof import('./src/components/CommentBox.vue')['default']
     NewsCard: typeof import('./src/components/NewsCard.vue')['default']
-    NewsSearchCard: typeof import('./src/components/NewsSearchCard.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TheFooter: typeof import('./src/components/TheFooter.vue')['default']

@@ -6,7 +6,6 @@ import LoginView from "@/views/LoginView.vue";
 import NewsDetailView from "@/views/NewsDetailView.vue";
 import RegisterView from "@/views/RegisterView.vue";
 import DashBoardView from "@/views/DashBoardView.vue";
-import NewsSearchView from "@/views/NewsSearchView.vue";
 
 const router = createRouter({
   history: createWebHistory("/"),
@@ -19,12 +18,6 @@ const router = createRouter({
       path: "/news",
       name: "News",
       component: NewsView,
-    },
-    {
-      path: "/news/search",
-      name: "newsSearch",
-      component: NewsSearchView,
-      props: true,
     },
     {
       path: "/news/:id",

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import { RouterLink, useRouter } from "vue-router";
 
 import { useAuth } from "@/composables/useAuth";
@@ -8,8 +7,6 @@ import { useUserStore } from "@/store/user";
 const { logoutUser } = useAuth();
 const userStore = useUserStore();
 const router = useRouter();
-
-const searchQuery = ref("");
 
 const handleAuthAction = () => {
   if (userStore.isLoggedIn) {
@@ -25,10 +22,6 @@ const refreshPage = (event: MouseEvent) => {
     window.location.reload();
   });
 };
-
-const searchArticle = () => {
-  document.location.href = `/news/search?q=${searchQuery.value}`;
-};
 </script>
 
 <template>
@@ -39,26 +32,6 @@ const searchArticle = () => {
       </router-link>
 
       <nav class="menus">
-        <input
-          v-model="searchQuery"
-          type="text"
-          class="search-input"
-          placeholder="검색어를 입력하세요"
-          @keyup.enter="searchArticle"
-        />
-        <button @click="searchArticle">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            viewBox="0 0 16 16"
-          >
-            <path
-              d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"
-            />
-          </svg>
-        </button>
         <router-link to="/news">나만의 뉴스 큐레이팅</router-link>
         <router-link to="/dashboard">대시보드</router-link>
         <button @click="handleAuthAction">
@@ -97,13 +70,6 @@ const searchArticle = () => {
 
   a.router-link-active {
     font-weight: bold;
-  }
-
-  .search-input {
-    border: 1px solid #000000;
-    padding: 8px 16px;
-    border-radius: 8px;
-    margin-right: -10px;
   }
 }
 </style>
