@@ -28,18 +28,6 @@ SSAFY 개인 맞춤형 뉴스 서비스는 AI 기반 뉴스 추천 기능을 통
 - **뉴스 상세 페이지**: 글을 '좋아요'하여 저장할 수 있으며, 사이드바에 글과 관련된 뉴스가 표시됩니다.
  <img width="1512" alt="image" src="https://github.com/user-attachments/assets/ab9a2093-bf6f-448f-bec7-d6348053fd15">
 
-- **커뮤니티**: 글/댓글 작성 가능, 맞춤 뉴스가 추천됩니다.
- <table>
-  <tr>
-    <td>
-      <img src="https://github.com/user-attachments/assets/e699f5f6-ac01-4e09-85a1-2feaba6d58b7" alt="image" width="500"/>
-    </td>
-    <td>
-      <img src="https://github.com/user-attachments/assets/5c0cd489-ad24-4647-acce-336101f54f4f" alt="image" width="500"/>
-    </td>
-  </tr>
-</table>
-
 - **대시보드**: 개인의 활동을 시각화한 대시보드입니다.
   - 나의 관심 카테고리 : 사용자가 주로 읽은 카테고리를 시각화
   - 주요 키워드 : 사용자가 관심있게 본 뉴스 기사들에서 많이 등장한 핵심 키워드 추출
