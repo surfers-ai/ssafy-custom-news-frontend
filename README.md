@@ -31,21 +31,6 @@ SSAFY 개인 맞춤형 뉴스 서비스는 AI 기반 뉴스 추천 기능을 통
 - **뉴스 ai 챗봇**: 뉴스에 대해 ai와 대화할 수 있습니다.
   <img width="1011" alt="image" src="https://github.com/user-attachments/assets/4cb07452-6010-47a3-b8eb-ea057ed32fc7">
 
-- **커뮤니티**: 글/댓글 작성 가능, 맞춤 뉴스가 추천됩니다.
- <table>
-  <tr>
-    <td>
-      <img src="https://github.com/user-attachments/assets/e699f5f6-ac01-4e09-85a1-2feaba6d58b7" alt="image" width="500"/>
-    </td>
-    <td>
-      <img src="https://github.com/user-attachments/assets/5c0cd489-ad24-4647-acce-336101f54f4f" alt="image" width="500"/>
-    </td>
-  </tr>
-</table>
-
-- **게시판 글작성**: 카테고리 및 해시태그 설정 가능
-  <img width="1503" alt="image" src="https://github.com/user-attachments/assets/05b68bbd-ea6b-4ec1-bbfc-944490d847f6">
-
 - **대시보드**: 개인의 활동을 시각화한 대시보드입니다.
   - 나의 관심 카테고리 : 사용자가 주로 읽은 카테고리를 시각화
   - 주요 키워드 : 사용자가 관심있게 본 뉴스 기사들에서 많이 등장한 핵심 키워드 추출
